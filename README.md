@@ -2,10 +2,7 @@
 
 Python(numpy)实现SMO算法，也就是
 
-$$
-\min_{\alpha}\quad\frac{1}{2}\alpha^TQ\alpha+p^\top\alpha\\
-    s.t.\quad y^T\alpha=0, 0≤\alpha_i≤C
-$$
+![opt](src/formula.png)
 
 的优化算法（[Solver类](./solver.py)），从而实现支持向量机分类与回归。
 
