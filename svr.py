@@ -36,8 +36,21 @@ class LinearSVR(BaseEstimator):
         alpha_star = alpha2[l:]
         self.w = (alpha_star - alpha) @ X
         is_sv = np.logical_and(alpha_star > 0, alpha_star < C)
-        self.b = np.mean(z[is_sv] - self.w @ X[is_sv].T) + self.epsilon
-
+        if np.sum(is_sv) > 0:
+            self.b = np.mean(z[is_sv] - self.w @ X[is_sv].T) + self.epsilon
+        else:
+            print("no sv")
+            ub_id = np.logical_or(
+                np.logical_and(alpha2 == 0, y == -1),
+                np.logical_and(alpha2 == C, y == 1),
+            )
+            lb_id = np.logical_or(
+                np.logical_and(alpha2 == 0, y == 1),
+                np.logical_and(alpha2 == C, y == -1),
+            )
+            grad = Q @ alpha2 + p
+            self.b = (np.max((y * grad)[lb_id]) + np.min(
+                (y * grad)[ub_id])) / 2
         return self
 
     def predict(self, x):

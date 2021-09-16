@@ -38,7 +38,20 @@ class LinearSVC(BaseEstimator):
         # 计算支持向量, 从而计算b
         self.sv = self.X[alpha != 0]
         self.w = alpha * self.y @ self.X
-        self.b = np.mean(self.y[alpha != 0] - self.w @ self.sv.T)
+        if len(self.sv) > 0:
+            self.b = np.mean(self.y[alpha != 0] - self.w @ self.sv.T)
+        else:
+            print("no sv")
+            ub_id = np.logical_or(
+                np.logical_and(alpha == 0, y == -1),
+                np.logical_and(alpha == self.C, y == 1),
+            )
+            lb_id = np.logical_or(
+                np.logical_and(alpha == 0, y == 1),
+                np.logical_and(alpha == self.C, y == -1),
+            )
+            grad = Q @ alpha - 1
+            b = (np.max((y * grad)[lb_id]) + np.min((y * grad)[ub_id])) / 2
         return self
 
     def predict(self, X):
@@ -123,12 +136,25 @@ class KernelSVC(BaseEstimator):
         alpha = s.get_alpha()
 
         self.sv = self.X[alpha != 0]
-        b = np.mean(self.y[alpha != 0] -
-                    alpha * self.y @ self.kernel_func(self.X, self.sv))
+        if len(self.sv) > 0:
+            b = np.mean(self.y[alpha != 0] -
+                        alpha * self.y @ self.kernel_func(self.X, self.sv))
+        else:
+            print("no sv")
+            ub_id = np.logical_or(
+                np.logical_and(alpha == 0, y == -1),
+                np.logical_and(alpha == self.C, y == 1),
+            )
+            lb_id = np.logical_or(
+                np.logical_and(alpha == 0, y == 1),
+                np.logical_and(alpha == self.C, y == -1),
+            )
+            grad = Q @ alpha - 1
+            b = (np.max((y * grad)[lb_id]) + np.min((y * grad)[ub_id])) / 2
 
         self.decision_function = lambda x: alpha * self.y @ self.kernel_func(
             self.X, x) + b
-            
+
         return self
 
     def predict(self, X):
