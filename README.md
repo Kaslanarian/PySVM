@@ -47,4 +47,4 @@ pred = model.predict(test_X)
 print(mean_squared_error(test_y, pred))
 ```
 
-输出测试误差为24.49，与线性模型拟合的平均效果近似[https://welts.xyz/2021/09/07/baseline/](性能baseline参考)，验证了我们的模型实现正确。
+输出测试误差为24.49，与线性模型拟合的平均效果近似（[性能baseline参考](https://welts.xyz/2021/09/07/baseline/)），验证了我们的模型实现正确。
