@@ -15,19 +15,28 @@ class Solver:
     Q : 待优化函数的二次项
     p : 待优化函数的一次项
     y : 限制条件中的y向量
-    C : 限制条件中的正数C
+    Cp: 正样本的限制C
+    Cn: 负样本的限制C
     '''
-    def __init__(self, l, Q, p, y, Cp, Cn, max_iter=1000) -> None:
+    def __init__(self,
+                 l: int,
+                 Q,
+                 p,
+                 y,
+                 alpha,
+                 Cp: float,
+                 Cn: float,
+                 max_iter: int = 1000) -> None:
         self.l = l
         self.Q = Q
         self.p = p
-        self.y = y.astype('float')
+        self.y = y
         self.C = (Cp, Cn)
+        self.alpha = alpha
         self.max_iter = max_iter
         self.f = lambda x: x @ self.Q @ x / 2 + self.p @ x
 
     def solve(self, verbose=False):
-        self.alpha = np.zeros(self.l)  # 解向量
         self.grad = np.copy(self.p)  # 梯度：Qa+p
         self.has_coverage = False  # 收敛标志
         obj = self.f(self.alpha)
