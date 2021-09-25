@@ -99,7 +99,7 @@ class KernelSVC(BaseEstimator):
             lambda x, y: (gamma * x @ y.T + coef0)**degree,
             "rbf":
             lambda x, y: np.exp(-gamma * np.linalg.norm(
-                np.expand_dims(x, axis=-1) - y.T, axis=1)**2),
+                np.expand_dims(x, axis=1) - y, axis=-1)**2),
             "sigmoid":
             lambda x, y: np.tanh(gamma * (x @ y.T) + coef0)
         }[self.kernel]
@@ -189,7 +189,7 @@ class NuSVC(KernelSVC):
             lambda x, y: (gamma * x @ y.T + coef0)**degree,
             "rbf":
             lambda x, y: np.exp(-gamma * np.linalg.norm(
-                np.expand_dims(x, axis=-1) - y.T, axis=1)**2),
+                np.expand_dims(x, axis=1) - y.T, axis=-1)**2),
             "sigmoid":
             lambda x, y: np.tanh(gamma * (x @ y.T) + coef0)
         }[self.kernel]
@@ -226,10 +226,8 @@ class NuSVC(KernelSVC):
         rho = s.get_rho()
         alpha = s.get_alpha() / rho
         b = s.get_b() / rho
-        self.decision_function = lambda x: alpha * y @ self.kernel_func(
-            X,
-            x
-        ) + b
+        self.decision_function = lambda x: alpha * y @ self.kernel_func(X, x
+                                                                        ) + b
         return self
 
     def predict(self, X):
