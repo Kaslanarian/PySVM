@@ -1,5 +1,18 @@
 # Support Vector Machine
 
+- [Support Vector Machine](#support-vector-machine)
+  - [文件结构](#文件结构)
+  - [支持向量分类](#支持向量分类)
+    - [LinearSVC](#linearsvc)
+    - [KernelSVC](#kernelsvc)
+    - [NuSVC](#nusvc)
+    - [多分类与调参](#多分类与调参)
+  - [支持向量回归](#支持向量回归)
+    - [LinearSVR](#linearsvr)
+    - [KernelSVR](#kernelsvr)
+    - [NuSVR](#nusvr)
+  - [异常检测](#异常检测)
+
 Python(numpy)实现SMO算法，也就是
 
 ![opt](src/formula.png)
@@ -9,6 +22,16 @@ Python(numpy)实现SMO算法，也就是
 ![opt2](src/nu-formula.png)
 
 的优化算法（[Solver类](./solver.py)和[NuSolver类](./solver.py)），从而实现支持向量机分类、回归以及异常检测。
+
+## 文件结构
+
+```bash
+.
+├── one_class.py # 异常检测：ONE_CLASS_SVM
+├── solver.py    # 求解线性约束二次规划问题的求解器：Solver, NuSolver
+├── svc.py       # 二分类器：LinearSVC, KernelSVC, NuSVC
+└── svr.py       # 回归方法：LinearSVR, KernelSVR, NuSVR
+```
 
 ## 支持向量分类
 
