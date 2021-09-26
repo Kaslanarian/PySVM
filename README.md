@@ -27,7 +27,7 @@ Python(numpy)实现SMO算法，也就是
 
 ```bash
 .
-├── one_class.py # 异常检测：ONE_CLASS_SVM
+├── one_class.py # 异常检测：OneClassSVM
 ├── solver.py    # 求解线性约束二次规划问题的求解器：Solver, NuSolver
 ├── svc.py       # 二分类器：LinearSVC, KernelSVC, NuSVC
 └── svr.py       # 回归方法：LinearSVR, KernelSVR, NuSVR
@@ -184,12 +184,12 @@ print(mean_squared_error(test_y, pred))
 One-class-SVM属于无监督算法，用于判断新数据是否离群：
 
 ```python
-from one_class import ONE_CLASS_SVM
+from one_class import OneClassSVM
 import numpy as np
 import matplotlib.pyplot as plt
 
 X = [[0], [0.44], [0.45], [0.46], [1]]
-model = ONE_CLASS_SVM(nu=0.5)
+model = OneClassSVM(nu=0.5)
 model.fit(X)
 data = np.linspace(-10, 10, 1000)
 plt.plot(

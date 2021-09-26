@@ -3,7 +3,7 @@ import numpy as np
 from sklearn.base import BaseEstimator
 
 
-class ONE_CLASS_SVM(BaseEstimator):
+class OneClassSVM(BaseEstimator):
     def __init__(self,
                  nu=0.5,
                  max_iter=1000,
@@ -43,7 +43,7 @@ class ONE_CLASS_SVM(BaseEstimator):
             lambda x, y: (gamma * x @ y.T + coef0)**degree,
             "rbf":
             lambda x, y: np.exp(-gamma * np.linalg.norm(
-                np.expand_dims(x, axis=-1) - y.T, axis=1)**2),
+                np.expand_dims(x, axis=1) - y, axis=-1)**2),
             "sigmoid":
             lambda x, y: np.tanh(gamma * (x @ y.T) + coef0)
         }[self.kernel]
