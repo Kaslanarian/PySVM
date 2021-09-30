@@ -1,17 +1,14 @@
 # Support Vector Machine
 
-- [Support Vector Machine](#support-vector-machine)
-  - [文件结构](#文件结构)
-  - [支持向量分类](#支持向量分类)
-    - [LinearSVC](#linearsvc)
-    - [KernelSVC](#kernelsvc)
-    - [NuSVC](#nusvc)
-    - [多分类与调参](#多分类与调参)
-  - [支持向量回归](#支持向量回归)
-    - [LinearSVR](#linearsvr)
-    - [KernelSVR](#kernelsvr)
-    - [NuSVR](#nusvr)
-  - [异常检测](#异常检测)
+对标sklearn中的SVM模块
+
+- [x] LinearSVC
+- [x] SVC
+- [x] NuSVC
+- [x] LinearSVR
+- [x] SVR
+- [x] NuSVR
+- [x] OneClassSVM
 
 Python(numpy)实现SMO算法，也就是
 
