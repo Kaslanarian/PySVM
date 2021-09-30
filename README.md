@@ -1,4 +1,4 @@
-# Support Vector Machine
+# PySVM
 
 对标sklearn中的SVM模块
 
