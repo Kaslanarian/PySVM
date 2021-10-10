@@ -3,9 +3,12 @@ import matplotlib.pyplot as plt
 from matplotlib.font_manager import FontProperties
 from sklearn.datasets import *
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_squared_error
 from svc import LinearSVC, KernelSVC, NuSVC
 from svr import LinearSVR, KernelSVR, NuSVR
 from one_class import OneClassSVM
+
+RANDOM_STATE = 2021
 
 
 def visual_svc_test():
@@ -16,6 +19,7 @@ def visual_svc_test():
         n_redundant=0,
         n_repeated=0,
         n_clusters_per_class=1,
+        random_state=RANDOM_STATE,
     )
     for y_ in np.unique(y):
         data = X[y == y_]
@@ -24,7 +28,12 @@ def visual_svc_test():
     plt.legend()
     plt.show()
 
-    train_X, test_X, train_y, test_y = train_test_split(X, y, train_size=0.7)
+    train_X, test_X, train_y, test_y = train_test_split(
+        X,
+        y,
+        train_size=0.7,
+        random_state=RANDOM_STATE,
+    )
     print(("{}SVC's perf : {:.2f}%\n" * 3).format(
         "Linear",
         LinearSVC().fit(train_X, train_y).score(test_X, test_y) * 100,
@@ -43,7 +52,12 @@ def dataset_svc_test(dataset="digits"):
         "digits": load_digits,
     }[dataset](return_X_y=True)
     X = (X - X.mean(0)) / (X.std(0) + 1e-8)
-    train_X, test_X, train_y, test_y = train_test_split(X, y, train_size=0.7)
+    train_X, test_X, train_y, test_y = train_test_split(
+        X,
+        y,
+        train_size=0.7,
+        random_state=RANDOM_STATE,
+    )
     print(("dataset : load_{}\n" + "{}SVC's perf : {:.2f}%\n" * 3).format(
         dataset,
         "Linear",
@@ -56,7 +70,10 @@ def dataset_svc_test(dataset="digits"):
 
 
 def visual_svr_test():
-    X, y = make_regression(n_features=1, noise=3, n_samples=50, random_state=1)
+    X, y = make_regression(n_features=1,
+                           noise=3,
+                           n_samples=50,
+                           random_state=RANDOM_STATE)
     plt.scatter(X.reshape(-1), y, label="linear_data")
     plt.scatter(X.reshape(-1), 0.01 * y**2, label="squared_data")
 
@@ -82,15 +99,23 @@ def dataset_svr_test(dataset="boston"):
         "diabetes": load_diabetes,
     }[dataset](return_X_y=True)
     X = (X - X.mean(0)) / (X.std(0) + 1e-8)
-    train_X, test_X, train_y, test_y = train_test_split(X, y, train_size=0.7)
+    train_X, test_X, train_y, test_y = train_test_split(
+        X,
+        y,
+        train_size=0.7,
+        random_state=RANDOM_STATE,
+    )
     print(("dataset : load_{}\n" + "{}SVR's perf : {}\n" * 3).format(
         dataset,
         "Linear",
-        -LinearSVR().fit(train_X, train_y).score(test_X, test_y),
+        mean_squared_error(LinearSVR().fit(train_X, train_y).predict(test_X),
+                           test_y),
         "Kernel",
-        -KernelSVR().fit(train_X, train_y).score(test_X, test_y),
+        mean_squared_error(KernelSVR().fit(train_X, train_y).predict(test_X),
+                           test_y),
         "    Nu",
-        -NuSVR().fit(train_X, train_y).score(test_X, test_y),
+        mean_squared_error(NuSVR().fit(train_X, train_y).predict(test_X),
+                           test_y),
     ))
 
 
