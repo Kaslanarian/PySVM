@@ -1,2 +1,2 @@
 numpy
-sklearn # 如果没有调参或多分类需求可以不安装
+sklearn
