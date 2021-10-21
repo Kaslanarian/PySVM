@@ -111,10 +111,10 @@ def dataset_svr_test(dataset="boston"):
         mean_squared_error(LinearSVR().fit(train_X, train_y).predict(test_X),
                            test_y),
         "Kernel",
-        mean_squared_error(KernelSVR().fit(train_X, train_y).predict(test_X),
+        mean_squared_error(KernelSVR(C=100).fit(train_X, train_y).predict(test_X),
                            test_y),
         "    Nu",
-        mean_squared_error(NuSVR().fit(train_X, train_y).predict(test_X),
+        mean_squared_error(NuSVR(C=100).fit(train_X, train_y).predict(test_X),
                            test_y),
     ))
 
@@ -193,7 +193,7 @@ if __name__ == "__main__":
     dataset_svc_test()
     print("自制数据集进行回归：")
     visual_svr_test()
-    print("对sklearn.datasets中的数据集进行分类：")
+    print("对sklearn.datasets中的数据集进行回归：")
     dataset_svr_test()
     print("测试并可视化OneClassSVM的训练效果：")
     visual_one_class_test()
