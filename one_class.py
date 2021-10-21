@@ -42,8 +42,8 @@ class OneClassSVM(BaseEstimator):
             "poly":
             lambda x, y: (gamma * x @ y.T + coef0)**degree,
             "rbf":
-            lambda x, y: np.exp(-gamma * np.linalg.norm(
-                np.expand_dims(x, axis=1) - y, axis=-1)**2),
+            lambda x, y: np.exp(-gamma * ((x**2).sum(1).reshape(-1, 1) +
+                                          (y**2).sum(1) - 2 * x @ y.T)),
             "sigmoid":
             lambda x, y: np.tanh(gamma * (x @ y.T) + coef0)
         }[self.kernel]

@@ -12,16 +12,10 @@ class LinearSVC(BaseEstimator):
 
     def fit(self, X, y):
         X, y = np.array(X), np.array(y, dtype=float)
-        if len(np.unique(y)) > 2:
-            print("LinearSVC only support binary classification")
-            return self
-
-        y[y != 1] = -1
         l, self.n_features = X.shape
 
-        y = y.reshape(l, 1)
-        Q = (y @ y.T) * (X @ X.T)  # Q矩阵
-        y = y.reshape(-1)
+        y[y != 1] = -1
+        Q = (y.reshape(-1, 1) * y) * (X @ X.T)  # Q矩阵
 
         s = Solver(l=l,
                    Q=Q,
@@ -75,11 +69,6 @@ class KernelSVC(BaseEstimator):
 
     def fit(self, X, y):
         X, y = np.array(X), np.array(y, dtype=float)
-        if len(np.unique(y)) > 2:
-            print("KernelSVC only support binary classification")
-            return self
-
-        y[y != 1] = -1
         l, self.n_features = X.shape
 
         # 注册核函数相关
@@ -98,16 +87,15 @@ class KernelSVC(BaseEstimator):
             "poly":
             lambda x, y: (gamma * x @ y.T + coef0)**degree,
             "rbf":
-            lambda x, y: np.exp(-gamma * np.linalg.norm(
-                np.expand_dims(x, axis=1) - y, axis=-1)**2),
+            lambda x, y: np.exp(-gamma * ((x**2).sum(1).reshape(-1, 1) +
+                                          (y**2).sum(1) - 2 * x @ y.T)),
             "sigmoid":
             lambda x, y: np.tanh(gamma * (x @ y.T) + coef0)
         }[self.kernel]
 
         # 计算Q
-        y = y.reshape(l, 1)
-        Q = (y @ y.T) * self.kernel_func(X, X)
-        y = y.reshape(-1)
+        y[y != 1] = -1
+        Q = (y.reshape(-1, 1) * y) * self.kernel_func(X, X)
 
         s = Solver(
             l=l,
@@ -166,11 +154,7 @@ class NuSVC(KernelSVC):
 
     def fit(self, X, y):
         X, y = np.array(X), np.array(y, dtype=float)
-        if len(np.unique(y)) > 2:
-            print("NuSVC only support binary classification")
-            return self
 
-        y[y != 1] = -1
         l, self.n_features = X.shape
 
         if type(self.gamma) == float:
@@ -188,15 +172,14 @@ class NuSVC(KernelSVC):
             "poly":
             lambda x, y: (gamma * x @ y.T + coef0)**degree,
             "rbf":
-            lambda x, y: np.exp(-gamma * np.linalg.norm(
-                np.expand_dims(x, axis=1) - y, axis=-1)**2),
+            lambda x, y: np.exp(-gamma * ((x**2).sum(1).reshape(-1, 1) +
+                                          (y**2).sum(1) - 2 * x @ y.T)),
             "sigmoid":
             lambda x, y: np.tanh(gamma * (x @ y.T) + coef0)
         }[self.kernel]
 
-        y = y.reshape(l, 1)
-        Q = (y @ y.T) * self.kernel_func(X, X)  # Q矩阵
-        y = y.reshape(-1)
+        y[y != 1] = -1
+        Q = (y.reshape(-1, 1) * y) * self.kernel_func(X, X)  # Q矩阵
 
         # 计算alpha初始值
         sum_pos = self.nu * l / 2
