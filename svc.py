@@ -45,22 +45,26 @@ class MultiLinearSVC(BaseEstimator):
 class MultiKernelSVC(BaseEstimator):
     def __init__(self,
                  C=1,
-                 max_iter=1000,
                  kernel='rbf',
                  degree=3,
                  gamma='scale',
                  coef0=0,
+                 max_iter=1000,
+                 rff=False,
+                 D=10000,
                  tol=1e-3,
                  verbose=False,
                  n_jobs=None,
                  method="ovo") -> None:
         super().__init__()
         self.C = C
-        self.max_iter = 1000
+        self.max_iter = max_iter
         self.kernel = kernel
         self.gamma = gamma
         self.degree = degree
         self.coef0 = coef0
+        self.rff = rff,
+        self.D = D,
         self.tol = tol
         self.max_iter = max_iter
         self.verbose = verbose
@@ -69,11 +73,13 @@ class MultiKernelSVC(BaseEstimator):
 
         self.base_model = base_svc.KernelSVC(
             C,
-            max_iter,
             kernel,
             degree,
             gamma,
             coef0,
+            max_iter,
+            rff,
+            D,
             tol,
             verbose,
         )
@@ -98,11 +104,13 @@ class MultiNuSVC(BaseEstimator):
     def __init__(
         self,
         nu=0.5,
-        max_iter=1000,
         kernel='rbf',
         degree=3,
         gamma='scale',
         coef0=0,
+        max_iter=1000,
+        rff=False,
+        D=10000,
         tol=1e-3,
         verbose=False,
         n_jobs=None,
@@ -116,16 +124,20 @@ class MultiNuSVC(BaseEstimator):
         self.degree = degree
         self.coef0 = coef0
         self.tol = tol
+        self.rff = rff
+        self.D = D
         self.verbose = verbose
         self.n_jobs = n_jobs
         self.method = method
         self.base_model = base_svc.NuSVC(
             nu,
-            max_iter,
             kernel,
             degree,
             gamma,
             coef0,
+            max_iter,
+            rff,
+            D,
             tol,
             verbose,
         )
@@ -148,4 +160,4 @@ class MultiNuSVC(BaseEstimator):
 
 LinearSVC = MultiLinearSVC
 KernelSVC = MultiKernelSVC
-NuSVC = MultiKernelSVC
+NuSVC = MultiNuSVC

@@ -69,6 +69,35 @@ def dataset_svc_test(dataset="digits"):
     ))
 
 
+def dataset_svc_rff_test(dataset="digits"):
+    X, y = {
+        "iris": load_iris,
+        "breast_cancer": load_breast_cancer,
+        "wine": load_wine,
+        "digits": load_digits,
+    }[dataset](return_X_y=True)
+    X = (X - X.mean(0)) / (X.std(0) + 1e-8)
+    train_X, test_X, train_y, test_y = train_test_split(
+        X,
+        y,
+        train_size=0.7,
+        random_state=RANDOM_STATE,
+    )
+    print("dataset : load_{}".format(dataset))
+    print("RBF-KernelSVC's perf : {:.2f}%, RFF-KernelSVC's perf : {:.2f}%".
+          format(
+              KernelSVC(n_jobs=4).fit(train_X, train_y).score(test_X, test_y) *
+              100,
+              KernelSVC(n_jobs=4, rff=True).fit(train_X, train_y).score(
+                  test_X, test_y) * 100,
+          ))
+    print("RBF-NuSVC's perf : {:.2f}%, RFF-NuSVC's perf : {:.2f}%\n".format(
+        NuSVC(n_jobs=4).fit(train_X, train_y).score(test_X, test_y) * 100,
+        NuSVC(n_jobs=4, rff=True).fit(train_X, train_y).score(test_X, test_y) *
+        100,
+    ))
+
+
 def visual_svr_test():
     X, y = make_regression(n_features=1,
                            noise=3,
@@ -111,11 +140,11 @@ def dataset_svr_test(dataset="boston"):
         mean_squared_error(LinearSVR().fit(train_X, train_y).predict(test_X),
                            test_y),
         "Kernel",
-        mean_squared_error(KernelSVR(C=100).fit(train_X, train_y).predict(test_X),
-                           test_y),
+        mean_squared_error(
+            KernelSVR(C=100).fit(train_X, train_y).predict(test_X), test_y),
         "    Nu",
-        mean_squared_error(NuSVR(C=100).fit(train_X, train_y).predict(test_X),
-                           test_y),
+        mean_squared_error(
+            NuSVR(C=100).fit(train_X, train_y).predict(test_X), test_y),
     ))
 
 
@@ -191,6 +220,8 @@ if __name__ == "__main__":
     visual_svc_test()
     print("对sklearn.datasets中的数据集进行分类：")
     dataset_svc_test()
+    print("基于随机傅里叶特征的SVC：")
+    dataset_svc_rff_test("breast_cancer")
     print("自制数据集进行回归：")
     visual_svr_test()
     print("对sklearn.datasets中的数据集进行回归：")

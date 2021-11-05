@@ -1,6 +1,7 @@
 from solver import Solver, NuSolver
 import numpy as np
 from sklearn.base import BaseEstimator
+from rff import RFF
 
 
 class LinearSVC(BaseEstimator):
@@ -49,22 +50,25 @@ class LinearSVC(BaseEstimator):
 class KernelSVC(BaseEstimator):
     def __init__(self,
                  C=1,
-                 max_iter=1000,
                  kernel='rbf',
                  degree=3,
                  gamma='scale',
                  coef0=0,
+                 max_iter=1000,
+                 rff=False,
+                 D=10000,
                  tol=1e-3,
                  verbose=False) -> None:
         super().__init__()
         self.C = C
-        self.max_iter = 1000
         self.kernel = kernel
         self.gamma = gamma
         self.degree = degree
         self.coef0 = coef0
         self.tol = tol
         self.max_iter = max_iter
+        self.rff = rff
+        self.D = D
         self.verbose = verbose
 
     def fit(self, X, y):
@@ -79,18 +83,22 @@ class KernelSVC(BaseEstimator):
                 'scale': 1 / (self.n_features * X.std()),
                 'auto': 1 / self.n_features,
             }[self.gamma]
+
+        # 是否使用随机傅里叶特征
+        if self.rff:
+            rff = RFF(gamma, self.D).fit(X)
+            rbf_func = lambda x, y: rff.transform(x) @ rff.transform(y).T
+        else:
+            rbf_func = lambda x, y: np.exp(-gamma * (
+                (x**2).sum(1).reshape(-1, 1) + (y**2).sum(1) - 2 * x @ y.T))
+
         degree = self.degree
         coef0 = self.coef0
         self.kernel_func = {
-            "linear":
-            lambda x, y: x @ y.T,
-            "poly":
-            lambda x, y: (gamma * x @ y.T + coef0)**degree,
-            "rbf":
-            lambda x, y: np.exp(-gamma * ((x**2).sum(1).reshape(-1, 1) +
-                                          (y**2).sum(1) - 2 * x @ y.T)),
-            "sigmoid":
-            lambda x, y: np.tanh(gamma * (x @ y.T) + coef0)
+            "linear": lambda x, y: x @ y.T,
+            "poly": lambda x, y: (gamma * x @ y.T + coef0)**degree,
+            "rbf": rbf_func,
+            "sigmoid": lambda x, y: np.tanh(gamma * (x @ y.T) + coef0)
         }[self.kernel]
 
         # 计算Q
@@ -135,20 +143,24 @@ class NuSVC(KernelSVC):
     def __init__(
         self,
         nu=0.5,
-        max_iter=1000,
         kernel='rbf',
         degree=3,
         gamma='scale',
         coef0=0,
+        max_iter=1000,
+        rff=False,
+        D=10000,
         tol=1e-3,
         verbose=False,
     ) -> None:
-        self.max_iter = max_iter
         self.nu = nu
         self.kernel = kernel
         self.gamma = gamma
         self.degree = degree
         self.coef0 = coef0
+        self.max_iter = max_iter
+        self.rff = rff
+        self.D = D
         self.tol = tol
         self.verbose = verbose
 
@@ -164,18 +176,21 @@ class NuSVC(KernelSVC):
                 'scale': 1 / (self.n_features * X.std()),
                 'auto': 1 / self.n_features,
             }[self.gamma]
+
+        if self.rff:
+            rff = RFF(gamma, self.D).fit(X)
+            rbf_func = lambda x, y: rff.transform(x) @ rff.transform(y).T
+        else:
+            rbf_func = lambda x, y: np.exp(-gamma * (
+                (x**2).sum(1).reshape(-1, 1) + (y**2).sum(1) - 2 * x @ y.T))
+
         degree = self.degree
         coef0 = self.coef0
         self.kernel_func = {
-            "linear":
-            lambda x, y: x @ y.T,
-            "poly":
-            lambda x, y: (gamma * x @ y.T + coef0)**degree,
-            "rbf":
-            lambda x, y: np.exp(-gamma * ((x**2).sum(1).reshape(-1, 1) +
-                                          (y**2).sum(1) - 2 * x @ y.T)),
-            "sigmoid":
-            lambda x, y: np.tanh(gamma * (x @ y.T) + coef0)
+            "linear": lambda x, y: x @ y.T,
+            "poly": lambda x, y: (gamma * x @ y.T + coef0)**degree,
+            "rbf": rbf_func,
+            "sigmoid": lambda x, y: np.tanh(gamma * (x @ y.T) + coef0)
         }[self.kernel]
 
         y[y != 1] = -1

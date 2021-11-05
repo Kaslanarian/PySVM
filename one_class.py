@@ -1,16 +1,19 @@
 from solver import Solver
 import numpy as np
+from rff import RFF
 from sklearn.base import BaseEstimator
 
 
 class OneClassSVM(BaseEstimator):
     def __init__(self,
                  nu=0.5,
-                 max_iter=1000,
                  kernel='rbf',
                  degree=3,
                  gamma='scale',
                  coef0=0,
+                 max_iter=1000,
+                 rff=False,
+                 D=10000,
                  tol=1e-3,
                  verbose=False) -> None:
         super().__init__()
@@ -20,6 +23,8 @@ class OneClassSVM(BaseEstimator):
         self.verbose = verbose
         self.kernel = kernel
         self.gamma = gamma
+        self.rff = rff
+        self.D = D
         self.degree = degree
         self.coef0 = coef0
 
@@ -34,18 +39,21 @@ class OneClassSVM(BaseEstimator):
                 'scale': 1 / (self.n_features * X.std()),
                 'auto': 1 / self.n_features,
             }[self.gamma]
+
+        if self.rff:
+            rff = RFF(gamma, self.D).fit(X)
+            rbf_func = lambda x, y: rff.transform(x) @ rff.transform(y).T
+        else:
+            rbf_func = lambda x, y: np.exp(-gamma * (
+                (x**2).sum(1).reshape(-1, 1) + (y**2).sum(1) - 2 * x @ y.T))
+
         degree = self.degree
         coef0 = self.coef0
         self.kernel_func = {
-            "linear":
-            lambda x, y: x @ y.T,
-            "poly":
-            lambda x, y: (gamma * x @ y.T + coef0)**degree,
-            "rbf":
-            lambda x, y: np.exp(-gamma * ((x**2).sum(1).reshape(-1, 1) +
-                                          (y**2).sum(1) - 2 * x @ y.T)),
-            "sigmoid":
-            lambda x, y: np.tanh(gamma * (x @ y.T) + coef0)
+            "linear": lambda x, y: x @ y.T,
+            "poly": lambda x, y: (gamma * x @ y.T + coef0)**degree,
+            "rbf": rbf_func,
+            "sigmoid": lambda x, y: np.tanh(gamma * (x @ y.T) + coef0)
         }[self.kernel]
 
         Q = self.kernel_func(X, X)

@@ -1,4 +1,5 @@
 from solver import NuSolver, Solver
+from rff import RFF
 import numpy as np
 from sklearn.base import BaseEstimator
 
@@ -60,11 +61,13 @@ class KernelSVR(BaseEstimator):
     def __init__(self,
                  C=1,
                  epsilon=0,
-                 max_iter=1000,
                  kernel='rbf',
                  degree=3,
                  gamma='scale',
                  coef0=0,
+                 max_iter=1000,
+                 rff=False,
+                 D=10000,
                  tol=1e-3,
                  verbose=False) -> None:
         super().__init__()
@@ -76,6 +79,8 @@ class KernelSVR(BaseEstimator):
         self.degree = degree
         self.coef0 = coef0
         self.tol = tol
+        self.rff = rff
+        self.D = D
         self.max_iter = max_iter
         self.verbose = verbose
 
@@ -92,18 +97,21 @@ class KernelSVR(BaseEstimator):
                 'scale': 1 / (self.n_features * X.std()),
                 'auto': 1 / self.n_features,
             }[self.gamma]
+
+        if self.rff:
+            rff = RFF(gamma, self.D).fit(X)
+            rbf_func = lambda x, y: rff.transform(x) @ rff.transform(y).T
+        else:
+            rbf_func = lambda x, y: np.exp(-gamma * (
+                (x**2).sum(1).reshape(-1, 1) + (y**2).sum(1) - 2 * x @ y.T))
+
         degree = self.degree
         coef0 = self.coef0
         self.kernel_func = {
-            "linear":
-            lambda x, y: x @ y.T,
-            "poly":
-            lambda x, y: (gamma * x @ y.T + coef0)**degree,
-            "rbf":
-            lambda x, y: np.exp(-gamma * ((x**2).sum(1).reshape(-1, 1) +
-                                          (y**2).sum(1) - 2 * x @ y.T)),
-            "sigmoid":
-            lambda x, y: np.tanh(gamma * (x @ y.T) + coef0)
+            "linear": lambda x, y: x @ y.T,
+            "poly": lambda x, y: (gamma * x @ y.T + coef0)**degree,
+            "rbf": rbf_func,
+            "sigmoid": lambda x, y: np.tanh(gamma * (x @ y.T) + coef0)
         }[self.kernel]
 
         # 计算Q：
@@ -152,10 +160,12 @@ class NuSVR(KernelSVR):
     def __init__(self,
                  C=1,
                  nu=0.5,
-                 max_iter=1000,
                  kernel='rbf',
                  degree=3,
                  gamma='scale',
+                 max_iter=1000,
+                 rff=False,
+                 D=10000,
                  coef0=0,
                  tol=0.001,
                  verbose=False) -> None:
@@ -166,6 +176,8 @@ class NuSVR(KernelSVR):
         self.degree = degree
         self.gamma = gamma
         self.coef0 = coef0
+        self.rff = rff
+        self.D = D
         self.tol = tol
         self.verbose = verbose
 
@@ -181,18 +193,21 @@ class NuSVR(KernelSVR):
                 'scale': 1 / (self.n_features * X.std()),
                 'auto': 1 / self.n_features,
             }[self.gamma]
+
+        if self.rff:
+            rff = RFF(gamma, self.D).fit(X)
+            rbf_func = lambda x, y: rff.transform(x) @ rff.transform(y).T
+        else:
+            rbf_func = lambda x, y: np.exp(-gamma * (
+                (x**2).sum(1).reshape(-1, 1) + (y**2).sum(1) - 2 * x @ y.T))
+
         degree = self.degree
         coef0 = self.coef0
         self.kernel_func = {
-            "linear":
-            lambda x, y: x @ y.T,
-            "poly":
-            lambda x, y: (gamma * x @ y.T + coef0)**degree,
-            "rbf":
-            lambda x, y: np.exp(-gamma * ((x**2).sum(1).reshape(-1, 1) +
-                                          (y**2).sum(1) - 2 * x @ y.T)),
-            "sigmoid":
-            lambda x, y: np.tanh(gamma * (x @ y.T) + coef0)
+            "linear": lambda x, y: x @ y.T,
+            "poly": lambda x, y: (gamma * x @ y.T + coef0)**degree,
+            "rbf": rbf_func,
+            "sigmoid": lambda x, y: np.tanh(gamma * (x @ y.T) + coef0)
         }[self.kernel]
 
         # 计算Q矩阵（2l*2l）
