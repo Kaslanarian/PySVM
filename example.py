@@ -44,7 +44,7 @@ def visual_svc_test():
     ))
 
 
-def dataset_svc_test(dataset="digits"):
+def dataset_svc_test(dataset="breast_cancer"):
     X, y = {
         "iris": load_iris,
         "breast_cancer": load_breast_cancer,

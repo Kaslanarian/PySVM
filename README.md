@@ -10,6 +10,8 @@
 - [x] NuSVR
 - [x] OneClassSVM
 
+2021.11.5 : 加入了高斯核函数的RFF方法。
+
 Python(numpy)实现SMO算法，也就是
 
 ![opt](src/formula.png)
@@ -36,12 +38,21 @@ KernelSVC's perf : 83.33%
 
 ### 对sklearn自带数据集分类
 
-以digits数据集为例：
+以breast_cancer数据集为例：
 
 ```python
-LinearSVC's perf : 97.59%
-KernelSVC's perf : 97.78%
-    NuSVC's perf : 97.78%
+LinearSVC's perf : 96.49%
+KernelSVC's perf : 97.08%
+    NuSVC's perf : 94.74%
+```
+
+### 基于随机傅里叶特征(RFF)的SVC
+
+以breast_cancer数据集为例：
+
+```python
+RBF-KernelSVC's perf : 97.08%, RFF-KernelSVC's perf : 95.91%
+RBF-NuSVC's perf : 94.74%, RFF-NuSVC's perf : 94.74%
 ```
 
 ### 自制数据集进行回归
