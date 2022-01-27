@@ -54,7 +54,9 @@ class LinearSVR(BaseEstimator):
         X = np.array(test_X).reshape(-1, self.n_features)
         y = np.array(test_y).reshape(-1)
         pred = self.predict(X)
-        return -np.mean((pred - y)**2)
+        SS_tot = np.sum((y - y.mean())**2)
+        SS_res = np.sum((y - pred)**2)
+        return 1 - SS_res / SS_tot
 
 
 class KernelSVR(BaseEstimator):
@@ -153,7 +155,10 @@ class KernelSVR(BaseEstimator):
         X = np.array(X).reshape(-1, self.n_features)
         y = np.array(y).reshape(-1)
         pred = self.predict(X)
-        return -np.mean((pred - y)**2)
+        SS_tot = np.sum((y - y.mean())**2)
+        SS_res = np.sum((y - pred)**2)
+        return 1 - SS_res / SS_tot
+
 
 
 class NuSVR(KernelSVR):
