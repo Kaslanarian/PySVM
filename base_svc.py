@@ -18,15 +18,17 @@ class LinearSVC(BaseEstimator):
         y[y != 1] = -1
         Q = (y.reshape(-1, 1) * y) * (X @ X.T)  # Q矩阵
 
-        s = Solver(l=l,
-                   Q=Q,
-                   p=-np.ones(l),
-                   y=y,
-                   alpha=np.zeros(l),
-                   Cp=self.C,
-                   Cn=self.C,
-                   max_iter=self.max_iter,
-                   eps=self.tol)
+        s = Solver(
+            l=l,
+            Q=Q,
+            p=-np.ones(l),
+            y=y,
+            alpha=np.zeros(l),
+            Cp=self.C,
+            Cn=self.C,
+            max_iter=self.max_iter,
+            eps=self.tol,
+        )
         s.solve(self.verbose)
         w = s.get_alpha() * y @ X
         b = s.get_b()
