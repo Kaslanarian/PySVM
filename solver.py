@@ -45,7 +45,6 @@ class Solver:
     def solve(self, verbose=False):
         self.grad = self.Q @ self.alpha + self.p  # 梯度：Qa+p
         self.has_coverage = False  # 收敛标志
-        obj = self.f(self.alpha)
 
         n_iter = 0
         while n_iter < self.max_iter and not self.has_coverage:
@@ -54,17 +53,11 @@ class Solver:
                 continue
 
             self.update(i, j)
-
-            obj_new = self.f(self.alpha)
-
-            if abs(obj - obj_new) < 1e-5:
-                self.has_coverage = True
-
-            obj = obj_new
             n_iter += 1
 
-            if verbose and n_iter % 100 == 0:
+            if verbose and n_iter % 100 == 99:
                 print("{} iters".format(n_iter))
+        obj = self.f(self.alpha)
         if verbose:
             print("optimize with {} iterations, objective value {}".format(
                 n_iter,
@@ -114,8 +107,8 @@ class Solver:
 
         if product[i] - product[j] < self.eps:
             self.has_coverage = True  # 选不出来违反对，停止迭代
-            return None, None
-
+            i, j = None, None
+            
         return i, j
 
     def update(self, i, j):
