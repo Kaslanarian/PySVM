@@ -56,6 +56,7 @@ class Solver:
             self.update(i, j)
 
             obj_new = self.f(self.alpha)
+
             if abs(obj - obj_new) < 1e-5:
                 self.has_coverage = True
 
@@ -81,8 +82,9 @@ class Solver:
             self.alpha > 0,
             self.alpha < self.C[0],
         )
-        if sv.sum(0) > 0:
-            self.rho = np.sum(self.y[sv] * self.grad[sv]) / np.sum(sv)
+        product = self.y * self.grad
+        if sv.sum() > 0:
+            self.rho = product[sv].sum() / sv.sum()
         else:
             ub_id = np.logical_or(
                 np.logical_and(self.alpha == 0, self.y == -1),
@@ -92,37 +94,28 @@ class Solver:
                 np.logical_and(self.alpha == 0, self.y == 1),
                 np.logical_and(self.alpha == self.C[1], self.y == -1),
             )
-            self.rho = ((self.y * self.grad)[lb_id].max() +
-                        (self.y * self.grad)[ub_id].min()) / 2
+            self.rho = (product[lb_id].max() + product[ub_id].min()) / 2
         self.b = -self.rho
 
     def select_working_set(self):
-        Iup = {
-            i
-            for i in range(self.l)
-            if (self.alpha[i] < self.C[0] and self.y[i] == 1) or (
-                self.alpha[i] > 0 and self.y[i] == -1)
-        }
-        Ilow = {
-            j
-            for j in range(self.l)
-            if (self.alpha[j] < self.C[1] and self.y[j] == -1) or (
-                self.alpha[j] > 0 and self.y[j] == 1)
-        }
-        m = max({-self.y[i] * self.grad[i] for i in Iup})
-        M = min({-self.y[j] * self.grad[j] for j in Ilow})
+        Iup = np.argwhere(
+            np.logical_or(
+                np.logical_and(self.alpha < self.C[0], self.y == 1),
+                np.logical_and(self.alpha > 0, self.y == -1),
+            )).reshape(-1)
+        Ilow = np.argwhere(
+            np.logical_or(
+                np.logical_and(self.alpha < self.C[1], self.y == -1),
+                np.logical_and(self.alpha > 0, self.y == 1),
+            )).reshape(-1)
 
-        if m - M < self.eps:
+        product = -self.y * self.grad
+        i, j = Iup[np.argmax(product[Iup])], Ilow[np.argmin(product[Ilow])]
+
+        if product[i] - product[j] < self.eps:
             self.has_coverage = True  # 选不出来违反对，停止迭代
             return None, None
 
-        for i in Iup:
-            if -self.y[i] * self.grad[i] == m:
-                break
-
-        for j in Ilow:
-            if -self.y[j] * self.grad[j] == M:
-                break
         return i, j
 
     def update(self, i, j):
@@ -189,13 +182,9 @@ class Solver:
                     alpha[i] = 0
                     alpha[j] = sum
 
-        delta_alpha_i = alpha[i] - old_alpha_i
-        delta_alpha_j = alpha[j] - old_alpha_j
-
-        self.grad += self.Q[[i, j]].T @ np.array([
-            delta_alpha_i,
-            delta_alpha_j,
-        ])
+        delta_i, delta_j = alpha[i] - old_alpha_i, alpha[j] - old_alpha_j
+        self.grad += self.Q[i] * delta_i + self.Q[j] * delta_j
+        return delta_i, delta_j
 
     def get_alpha(self):
         return self.alpha
