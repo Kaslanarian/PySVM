@@ -1,155 +1,136 @@
-from solver import NuSolver, Solver
+from functools import lru_cache
 from rff import RFF
 import numpy as np
-from sklearn.base import BaseEstimator
+from base_svc import LinearSVC, KernelSVC
 
 
-class LinearSVR(BaseEstimator):
-    def __init__(self,
-                 C=1,
-                 max_iter=1000,
-                 epsilon=0,
-                 tol=0.0001,
-                 verbose=False) -> None:
+class LinearSVR(LinearSVC):
+    def __init__(self, C=1, max_iter=1000, epsilon=0, tol=0.001) -> None:
         self.max_iter = max_iter
         self.epsilon = epsilon
         self.C = C
         self.tol = tol
-        self.verbose = verbose
 
     def fit(self, X, y):
-        X, z = np.array(X), np.array(y)
-        l, self.n_features = X.shape
-        C = self.C
-        # 计算Q矩阵（2l*2l）
-        X_stack = np.vstack((X, X))
-        y = np.vstack((np.ones((l, 1)), -np.ones((l, 1))))
-        Q = (y @ y.T) * (X_stack @ X_stack.T)
+        self.X, z = np.array(X), np.array(y)
+        self.l, self.n_features = X.shape
 
-        p = self.epsilon + np.hstack((z, -z))  # 2l
-        s = Solver(
-            l=2 * l,
-            Q=Q,
-            p=p,
-            y=y.reshape(-1),
-            alpha=np.zeros(2 * l),
-            Cp=C,
-            Cn=C,
-            max_iter=self.max_iter,
+        y = np.empty(2 * self.l)
+        y[:self.l], y[self.l:] = 1, -1
+
+        p = self.epsilon + np.hstack((-z, z))  # 2l
+        alpha = np.zeros(2 * self.l)
+        neg_y_grad = -y * p
+        n_iter = 0
+        while n_iter < self.max_iter:
+            Iup = np.argwhere(
+                np.logical_or(
+                    np.logical_and(alpha < self.C, y == 1),
+                    np.logical_and(alpha > 0, y == -1),
+                )).reshape(-1)
+            Ilow = np.argwhere(
+                np.logical_or(
+                    np.logical_and(alpha < self.C, y == -1),
+                    np.logical_and(alpha > 0, y == 1),
+                )).reshape(-1)
+
+            i, j = Iup[np.argmax(neg_y_grad[Iup])], Ilow[np.argmin(
+                neg_y_grad[Ilow])]
+
+            if neg_y_grad[i] - neg_y_grad[j] < self.tol:
+                break
+
+            Qi, Qj = self.calculate_product(i), self.calculate_product(j)
+            old_alpha_i, old_alpha_j = alpha[i], alpha[j]
+
+            quad_coef = Qi[i] + Qj[j] - 2 * y[i] * y[j] * Qi[j]
+            if quad_coef <= 0:
+                quad_coef = 1e-12
+
+            if y[i] * y[j] == -1:
+                delta = (neg_y_grad[i] * y[i] +
+                         neg_y_grad[j] * y[j]) / quad_coef
+                diff = old_alpha_i - old_alpha_j
+                alpha[i] += delta
+                alpha[j] += delta
+
+                if diff > 0:
+                    if (alpha[j] < 0):
+                        alpha[j] = 0
+                        alpha[i] = diff
+
+                else:
+                    if (alpha[i] < 0):
+                        alpha[i] = 0
+                        alpha[j] = -diff
+
+                if diff > 0:
+                    if (alpha[i] > self.C):
+                        alpha[i] = self.C
+                        alpha[j] = self.C - diff
+
+                else:
+                    if (alpha[j] > self.C):
+                        alpha[j] = self.C
+                        alpha[i] = self.C + diff
+
+            else:
+                delta = (neg_y_grad[j] * y[j] -
+                         neg_y_grad[i] * y[i]) / quad_coef
+                sum = alpha[i] + alpha[j]
+                alpha[i] -= delta
+                alpha[j] += delta
+
+                if sum > self.C:
+                    if alpha[i] > self.C:
+                        alpha[i] = self.C
+                        alpha[j] = sum - self.C
+
+                else:
+                    if alpha[j] < 0:
+                        alpha[j] = 0
+                        alpha[i] = sum
+
+                if sum > self.C:
+                    if alpha[j] > self.C:
+                        alpha[j] = self.C
+                        alpha[i] = sum - self.C
+
+                else:
+                    if alpha[i] < 0:
+                        alpha[i] = 0
+                        alpha[j] = sum
+
+            delta_i, delta_j = alpha[i] - old_alpha_i, alpha[j] - old_alpha_j
+            neg_y_grad -= y * (Qi * delta_i + Qj * delta_j)
+            n_iter += 1
+
+        if n_iter == self.max_iter:
+            print("Not coverage")
+
+        sv = np.logical_and(
+            alpha > 0,
+            alpha < self.C,
         )
-        s.solve(verbose=self.verbose)
-        alpha2 = s.get_alpha()
-        alpha = alpha2[:l]
-        alpha_star = alpha2[l:]
-        w = (alpha_star - alpha) @ X
-        rho = s.get_rho()
-        self.decision_function = lambda x: w @ x.T + rho
-        return self
-
-    def predict(self, x):
-        x = np.array(x).reshape(-1, self.n_features)
-        return self.decision_function(x)
-
-    def score(self, test_X, test_y):
-        X = np.array(test_X).reshape(-1, self.n_features)
-        y = np.array(test_y).reshape(-1)
-        pred = self.predict(X)
-        SS_tot = np.sum((y - y.mean())**2)
-        SS_res = np.sum((y - pred)**2)
-        return 1 - SS_res / SS_tot
-
-
-class KernelSVR(BaseEstimator):
-    def __init__(self,
-                 C=1,
-                 epsilon=0,
-                 kernel='rbf',
-                 degree=3,
-                 gamma='scale',
-                 coef0=0,
-                 max_iter=1000,
-                 rff=False,
-                 D=10000,
-                 tol=1e-3,
-                 verbose=False) -> None:
-        super().__init__()
-        self.C = C
-        self.epsilon = epsilon
-        self.max_iter = 1000
-        self.kernel = kernel
-        self.gamma = gamma
-        self.degree = degree
-        self.coef0 = coef0
-        self.tol = tol
-        self.rff = rff
-        self.D = D
-        self.max_iter = max_iter
-        self.verbose = verbose
-
-    def fit(self, X, y):
-        X, z = np.array(X), np.array(y, dtype=float)
-        l, self.n_features = X.shape
-        C = self.C
-
-        # 注册核函数相关
-        if type(self.gamma) == float:
-            gamma = self.gamma
+        if sv.sum() > 0:
+            rho = -np.average(neg_y_grad[sv])
         else:
-            gamma = {
-                'scale': 1 / (self.n_features * X.std()),
-                'auto': 1 / self.n_features,
-            }[self.gamma]
+            ub_id = np.logical_or(
+                np.logical_and(alpha == 0, y == -1),
+                np.logical_and(alpha == self.C, y == 1),
+            )
+            lb_id = np.logical_or(
+                np.logical_and(alpha == 0, y == 1),
+                np.logical_and(alpha == self.C, y == -1),
+            )
+            rho = -(neg_y_grad[lb_id].min() + neg_y_grad[ub_id].max()) / 2
 
-        if self.rff:
-            rff = RFF(gamma, self.D).fit(X)
-            rbf_func = lambda x, y: rff.transform(x) @ rff.transform(y).T
-        else:
-            rbf_func = lambda x, y: np.exp(-gamma * (
-                (x**2).sum(1).reshape(-1, 1) + (y**2).sum(1) - 2 * x @ y.T))
-
-        degree = self.degree
-        coef0 = self.coef0
-        self.kernel_func = {
-            "linear": lambda x, y: x @ y.T,
-            "poly": lambda x, y: (gamma * x @ y.T + coef0)**degree,
-            "rbf": rbf_func,
-            "sigmoid": lambda x, y: np.tanh(gamma * (x @ y.T) + coef0)
-        }[self.kernel]
-
-        # 计算Q：
-        Q0 = self.kernel_func(X, X)
-        Q = np.hstack((Q0, -Q0))
-        Q = np.vstack((Q, -Q))
-
-        p = self.epsilon + np.hstack((z, -z))  # 2l
-        y = np.hstack((np.ones(l), -np.ones(l)))
-        s = Solver(
-            2 * l,
-            Q,
-            p,
-            y,
-            np.zeros(2 * l),
-            C,
-            C,
-            max_iter=self.max_iter,
-        )
-        s.solve(verbose=self.verbose)
-        alpha2 = s.get_alpha()
-        alpha = alpha2[:l]
-        alpha_star = alpha2[l:]
-        alpha_diff = alpha_star - alpha
-        rho = s.get_rho()
-        self.decision_function = lambda x: alpha_diff @ self.kernel_func(
-            X,
-            x,
-        ) + rho
-
+        w = (alpha[:self.l] - alpha[self.l:]) @ X
+        self.decision_function = lambda x: w @ x.T - rho
         return self
 
     def predict(self, X):
-        X = np.array(X).reshape(-1, self.n_features)
-        pred = self.decision_function(X)
-        return pred
+        return self.decision_function(np.array(X).reshape(-1, self.n_features))
 
     def score(self, X, y):
         X = np.array(X).reshape(-1, self.n_features)
@@ -159,6 +140,166 @@ class KernelSVR(BaseEstimator):
         SS_res = np.sum((y - pred)**2)
         return 1 - SS_res / SS_tot
 
+    @lru_cache(maxsize=64)
+    def calculate_product(self, i):
+        if i < self.l:
+            Qi = self.X @ self.X[i]
+        else:
+            Qi = -self.X @ self.X[i - self.l]
+        return np.hstack((Qi, -Qi))
+
+
+class KernelSVR(LinearSVR, KernelSVC):
+    def __init__(self,
+                 C=1,
+                 epsilon=0,
+                 kernel='rbf',
+                 degree=3,
+                 gamma='scale',
+                 coef0=0,
+                 max_iter=1000,
+                 rff=False,
+                 D=10000,
+                 tol=1e-3) -> None:
+        super().__init__(C, max_iter, epsilon, tol)
+        self.kernel = kernel
+        self.gamma = gamma
+        self.degree = degree
+        self.coef0 = coef0
+        self.rff = rff
+        self.D = D
+
+    def fit(self, X, y):
+        self.X, z = np.array(X), np.array(y, dtype=float)
+        self.l, self.n_features = self.X.shape
+
+        self.kernel_func = self.register_kernel()
+
+        y = np.empty(2 * self.l)
+        y[:self.l], y[self.l:] = 1, -1
+        p = self.epsilon + np.hstack((-z, z))  # 2l
+        alpha = np.zeros(2 * self.l)
+
+        neg_y_grad = -y * p
+        n_iter = 0
+        while n_iter < self.max_iter:
+            Iup = np.argwhere(
+                np.logical_or(
+                    np.logical_and(alpha < self.C, y == 1),
+                    np.logical_and(alpha > 0, y == -1),
+                )).reshape(-1)
+            Ilow = np.argwhere(
+                np.logical_or(
+                    np.logical_and(alpha < self.C, y == -1),
+                    np.logical_and(alpha > 0, y == 1),
+                )).reshape(-1)
+
+            i, j = Iup[np.argmax(neg_y_grad[Iup])], Ilow[np.argmin(
+                neg_y_grad[Ilow])]
+
+            if neg_y_grad[i] - neg_y_grad[j] < self.tol:
+                break
+
+            Qi, Qj = self.calculate_kernel(i), self.calculate_kernel(j)
+            old_alpha_i, old_alpha_j = alpha[i], alpha[j]
+
+            quad_coef = Qi[i] + Qj[j] - 2 * y[i] * y[j] * Qi[j]
+            if quad_coef <= 0:
+                quad_coef = 1e-12
+
+            if y[i] * y[j] == -1:
+                delta = (neg_y_grad[i] * y[i] +
+                         neg_y_grad[j] * y[j]) / quad_coef
+                diff = old_alpha_i - old_alpha_j
+                alpha[i] += delta
+                alpha[j] += delta
+
+                if diff > 0:
+                    if (alpha[j] < 0):
+                        alpha[j] = 0
+                        alpha[i] = diff
+
+                else:
+                    if (alpha[i] < 0):
+                        alpha[i] = 0
+                        alpha[j] = -diff
+
+                if diff > 0:
+                    if (alpha[i] > self.C):
+                        alpha[i] = self.C
+                        alpha[j] = self.C - diff
+
+                else:
+                    if (alpha[j] > self.C):
+                        alpha[j] = self.C
+                        alpha[i] = self.C + diff
+
+            else:
+                delta = (neg_y_grad[j] * y[j] -
+                         neg_y_grad[i] * y[i]) / quad_coef
+                sum = alpha[i] + alpha[j]
+                alpha[i] -= delta
+                alpha[j] += delta
+
+                if sum > self.C:
+                    if alpha[i] > self.C:
+                        alpha[i] = self.C
+                        alpha[j] = sum - self.C
+
+                else:
+                    if alpha[j] < 0:
+                        alpha[j] = 0
+                        alpha[i] = sum
+
+                if sum > self.C:
+                    if alpha[j] > self.C:
+                        alpha[j] = self.C
+                        alpha[i] = sum - self.C
+
+                else:
+                    if alpha[i] < 0:
+                        alpha[i] = 0
+                        alpha[j] = sum
+
+            delta_i, delta_j = alpha[i] - old_alpha_i, alpha[j] - old_alpha_j
+            neg_y_grad -= y * (Qi * delta_i + Qj * delta_j)
+            n_iter += 1
+
+        if n_iter == self.max_iter:
+            print("Not coverage")
+
+        sv = np.logical_and(
+            alpha > 0,
+            alpha < self.C,
+        )
+        if sv.sum() > 0:
+            rho = -np.average(neg_y_grad[sv])
+        else:
+            ub_id = np.logical_or(
+                np.logical_and(alpha == 0, y == -1),
+                np.logical_and(alpha == self.C, y == 1),
+            )
+            lb_id = np.logical_or(
+                np.logical_and(alpha == 0, y == 1),
+                np.logical_and(alpha == self.C, y == -1),
+            )
+            rho = -(neg_y_grad[lb_id].min() + neg_y_grad[ub_id].max()) / 2
+        alpha_diff = alpha[:self.l] - alpha[self.l:]
+        self.decision_function = lambda x: alpha_diff @ self.kernel_func(
+            self.X,
+            x,
+        ) - rho
+
+        return self
+
+    @lru_cache(maxsize=64)
+    def calculate_kernel(self, i):
+        if i < self.l:
+            Qi = self.kernel_func(self.X, self.X[i:i + 1]).reshape(-1)
+        else:
+            Qi = -self.kernel_func(
+                self.X, self.X[i - self.l:i - self.l + 1]).reshape(-1)
+        return np.hstack((Qi, -Qi))
 
 
 class NuSVR(KernelSVR):
@@ -168,91 +309,179 @@ class NuSVR(KernelSVR):
                  kernel='rbf',
                  degree=3,
                  gamma='scale',
+                 coef0=0,
                  max_iter=1000,
                  rff=False,
                  D=10000,
-                 coef0=0,
-                 tol=0.001,
-                 verbose=False) -> None:
-        self.C = C
+                 tol=0.001) -> None:
+        super().__init__(
+            C=C,
+            kernel=kernel,
+            degree=degree,
+            gamma=gamma,
+            coef0=coef0,
+            max_iter=max_iter,
+            rff=rff,
+            D=D,
+            tol=tol,
+        )
         self.nu = nu
-        self.max_iter = max_iter
-        self.kernel = kernel
-        self.degree = degree
-        self.gamma = gamma
-        self.coef0 = coef0
-        self.rff = rff
-        self.D = D
-        self.tol = tol
-        self.verbose = verbose
 
     def fit(self, X, y):
-        X, z = np.array(X), np.array(y)
-        l, self.n_features = X.shape
-        C = self.C
+        self.X, z = np.array(X), np.array(y)
+        self.l, self.n_features = X.shape
 
-        if type(self.gamma) == float:
-            gamma = self.gamma
-        else:
-            gamma = {
-                'scale': 1 / (self.n_features * X.std()),
-                'auto': 1 / self.n_features,
-            }[self.gamma]
+        self.kernel_func = self.register_kernel()
 
-        if self.rff:
-            rff = RFF(gamma, self.D).fit(X)
-            rbf_func = lambda x, y: rff.transform(x) @ rff.transform(y).T
-        else:
-            rbf_func = lambda x, y: np.exp(-gamma * (
-                (x**2).sum(1).reshape(-1, 1) + (y**2).sum(1) - 2 * x @ y.T))
+        y = np.empty(2 * self.l)
+        y[:self.l], y[self.l:] = 1, -1
 
-        degree = self.degree
-        coef0 = self.coef0
-        self.kernel_func = {
-            "linear": lambda x, y: x @ y.T,
-            "poly": lambda x, y: (gamma * x @ y.T + coef0)**degree,
-            "rbf": rbf_func,
-            "sigmoid": lambda x, y: np.tanh(gamma * (x @ y.T) + coef0)
-        }[self.kernel]
+        p = self.epsilon + np.hstack((-z, z))  # 2l
+        alpha = np.zeros(2 * self.l)
 
-        # 计算Q矩阵（2l*2l）
-        Q0 = self.kernel_func(X, X)
-        Q = np.hstack((Q0, -Q0))
-        Q = np.vstack((Q, -Q))
+        sum = self.C * self.nu * self.l / 2
+        for i in range(self.l):
+            alpha[i] = alpha[i + self.l] = min(sum, self.C)
+            sum -= alpha[i]
 
-        p = np.hstack((z, -z))
-        y = np.hstack((np.ones(l), -np.ones(l)))
+        grad = np.empty(2 * self.l)
+        neg_y_prod_grad = np.empty(2 * self.l)
+        for i in range(2 * self.l):
+            grad[i] = self.calculate_kernel(i) @ alpha + p[i]
+            neg_y_prod_grad[i] = -y[i] * grad[i]
 
-        alpha2 = np.zeros(2 * l)
-        sum = C * self.nu * l / 2
-        for i in range(l):
-            alpha2[i] = alpha2[i + l] = min(sum, C)
-            sum -= alpha2[i]
+        n_iter = 0
+        while n_iter < self.max_iter:
+            Iup = np.argwhere(
+                np.logical_or(
+                    np.logical_and(alpha < 1, y == 1),
+                    np.logical_and(alpha > 0, y == -1),
+                )).reshape(-1)
+            Ilow = np.argwhere(
+                np.logical_or(
+                    np.logical_and(alpha < 1, y == -1),
+                    np.logical_and(alpha > 0, y == 1),
+                )).reshape(-1)
 
-        s = NuSolver(
-            l=2 * l,
-            Q=Q,
-            p=p,
-            y=y,
-            alpha=alpha2,
-            Cp=C,
-            Cn=C,
-            eps=self.tol,
-            max_iter=self.max_iter,
+            Imp = Iup[y[Iup] == 1]
+            IMp = Ilow[y[Ilow] == 1]
+            Imn = Iup[y[Iup] == -1]
+            IMn = Ilow[y[Ilow] == -1]
+
+            i_p = Imp[np.argmax(neg_y_prod_grad[Imp])]
+            j_p = IMp[np.argmin(neg_y_prod_grad[IMp])]
+            i_n = Imn[np.argmax(neg_y_prod_grad[Imn])]
+            j_n = IMn[np.argmin(neg_y_prod_grad[IMn])]
+
+            m_p = neg_y_prod_grad[i_p]
+            M_p = neg_y_prod_grad[j_p]
+            m_n = neg_y_prod_grad[i_n]
+            M_n = neg_y_prod_grad[j_n]
+
+            if max(m_p - M_p, m_n - M_n) < self.tol:
+                break
+
+            Qip = self.calculate_kernel(i_p)
+            Qjp = self.calculate_kernel(j_p)
+            Qin = self.calculate_kernel(i_n)
+            Qjn = self.calculate_kernel(j_n)
+
+            if y[i_p] != y[j_p]:
+                quad_coef = Qip[i_p] + Qjp[j_p] + 2 * Qip[j_p]
+                if quad_coef <= 0:
+                    quad_coef = 1e-12
+                term_p = -(-grad[i_p] - grad[j_p])**2 / (2 * quad_coef)
+            else:
+                quad_coef = Qip[i_p] + Qjp[j_p] - 2 * Qip[j_p]
+                if quad_coef <= 0:
+                    quad_coef = 1e-12
+                term_p = -(grad[i_p] - grad[j_p])**2 / (2 * quad_coef)
+
+            if y[i_n] != y[j_n]:
+                quad_coef = Qin[i_n] + Qjn[j_n] + 2 * Qin[j_n]
+                if quad_coef <= 0:
+                    quad_coef = 1e-12
+                term_n = -(-grad[i_n] - grad[j_n])**2 / (2 * quad_coef)
+            else:
+                quad_coef = Qin[i_n] + Qjn[j_n] - 2 * Qin[j_n]
+                if quad_coef <= 0:
+                    quad_coef = 1e-12
+                term_n = -(grad[i_n] - grad[j_p])**2 / (2 * quad_coef)
+            i, j, Qi, Qj = (i_p, j_p, Qip,
+                            Qjp) if term_p < term_n else (i_n, j_n, Qin, Qjn)
+
+            old_alpha_i, old_alpha_j = alpha[i], alpha[j]
+            quad_coef = Qi[i] + Qj[j] - 2 * Qi[j]
+            if quad_coef <= 0:
+                quad_coef = 1e-12
+            delta = (grad[i] - grad[j]) / quad_coef
+
+            sum = alpha[i] + alpha[j]
+            alpha[i] -= delta
+            alpha[j] += delta
+
+            if sum > self.C:
+                if alpha[i] > self.C:
+                    alpha[i] = self.C
+                    alpha[j] = sum - self.C
+
+            else:
+                if alpha[j] < 0:
+                    alpha[j] = 0
+                    alpha[i] = sum
+
+            if sum > self.C:
+                if alpha[j] > self.C:
+                    alpha[j] = self.C
+                    alpha[i] = sum - self.C
+
+            else:
+                if alpha[i] < 0:
+                    alpha[i] = 0
+                    alpha[j] = sum
+
+            detla_grad = (alpha[i] - old_alpha_i) * Qi + (alpha[j] -
+                                                          old_alpha_j) * Qj
+            grad += detla_grad
+            neg_y_prod_grad -= y * detla_grad
+            n_iter += 1
+
+        if n_iter == self.max_iter:
+            print("Not coverage")
+
+        pos_sv = np.logical_and(
+            np.logical_and(alpha > 0, alpha < self.C),
+            y == 1,
         )
-        s.solve(verbose=self.verbose)
-        alpha2 = s.get_alpha()
-        alpha = alpha2[:l]
-        alpha_star = alpha2[l:]
-        alpha_diff = alpha_star - alpha
+        if pos_sv.sum() == 0:
+            r1 = ((grad[np.logical_and(
+                alpha == 1,
+                y == 1,
+            )]).max() + (grad[np.logical_and(
+                alpha == 0,
+                y == 1,
+            )])).min() / 2
+        else:
+            r1 = np.average(grad[pos_sv])
+
+        neg_sv = np.logical_and(
+            np.logical_and(alpha > 0, alpha < self.C),
+            y == -1,
+        )
+        if neg_sv.sum() == 0:
+            r2 = (grad[np.logical_and(
+                alpha == 1,
+                y == -1,
+            )].max() + grad[np.logical_and(
+                alpha == 0,
+                y == -1,
+            )].min()) / 2
+        else:
+            r2 = np.average(grad[neg_sv])
+        b = (r2 - r1) / 2
+        alpha_diff = alpha[:self.l] - alpha[self.l:]
         self.decision_function = lambda x: alpha_diff @ self.kernel_func(
-            X,
+            self.X,
             x,
-        ) - s.get_b()
+        ) + b
         return self
-
-    def predict(self, X):
-        return super().predict(X)
-
-    def score(self, X, y):
-        return super().score(X, y)

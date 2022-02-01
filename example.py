@@ -3,7 +3,6 @@ import matplotlib.pyplot as plt
 from matplotlib.font_manager import FontProperties
 from sklearn.datasets import *
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import mean_squared_error
 from svc import LinearSVC, KernelSVC, NuSVC
 from svr import LinearSVR, KernelSVR, NuSVR
 from one_class import OneClassSVM
@@ -112,7 +111,7 @@ def visual_svr_test():
     pred = model.predict(test_x)
     plt.plot(test_x, pred, label="LinearSVC", color='red')
 
-    model = KernelSVR(C=100, kernel='poly', degree=2)
+    model = KernelSVR(C=10, kernel='poly', degree=2)
     model.fit(X, 0.01 * y**2)
     test_x = np.linspace(X.min(0), X.max(0), 100)
     pred = model.predict(test_x)
@@ -139,7 +138,7 @@ def dataset_svr_test(dataset="boston"):
         "Linear",
         LinearSVR().fit(train_X, train_y).score(test_X, test_y),
         "Kernel",
-        KernelSVR(C=100).fit(train_X, train_y).score(test_X, test_y),
+        KernelSVR().fit(train_X, train_y).score(test_X, test_y),
         "    Nu",
         NuSVR(C=100).fit(train_X, train_y).score(test_X, test_y),
     ))
@@ -211,5 +210,7 @@ def visual_one_class_test():
         % (n_error_train, n_error_test, n_error_outliers))
     plt.show()
 
-
+visual_svc_test()
+dataset_svc_test()
+visual_svr_test()
 dataset_svr_test()
