@@ -1,5 +1,7 @@
 # PySVM
 
+Chinese version : [cnREADME.md](https://github.com/Kaslanarian/PySVM/edit/main/cnREADME.md)
+
 Ues numpy to implement SVM after reading LIBSVM source code. **PySVM** supports classification, regression and outlier detection (same as `sklearn.svm`). In fact, we have built all SVM models in [sklearn](https://scikit-learn.org/stable/auto_examples/index.html#support-vector-machines):
 
 - [x] MultiLinearSVC(equals to `LinearSVC` in sklearn);
