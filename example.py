@@ -10,39 +10,6 @@ from one_class import OneClassSVM
 RANDOM_STATE = 2021
 
 
-def visual_svc_test():
-    X, y = make_classification(
-        n_features=2,
-        n_classes=3,
-        n_informative=2,
-        n_redundant=0,
-        n_repeated=0,
-        n_clusters_per_class=1,
-        random_state=RANDOM_STATE,
-    )
-    for y_ in np.unique(y):
-        data = X[y == y_]
-        plt.scatter(data[:, 0], data[:, 1], label="%d" % y_)
-
-    plt.legend()
-    plt.show()
-
-    train_X, test_X, train_y, test_y = train_test_split(
-        X,
-        y,
-        train_size=0.7,
-        random_state=RANDOM_STATE,
-    )
-    print(("{}SVC's perf : {:.2f}%\n" * 3).format(
-        "Linear",
-        LinearSVC().fit(train_X, train_y).score(test_X, test_y) * 100,
-        "Kernel",
-        KernelSVC().fit(train_X, train_y).score(test_X, test_y) * 100,
-        "    Nu",
-        NuSVC().fit(train_X, train_y).score(test_X, test_y) * 100,
-    ))
-
-
 def dataset_svc_test(dataset="breast_cancer"):
     X, y = {
         "iris": load_iris,
@@ -64,7 +31,7 @@ def dataset_svc_test(dataset="breast_cancer"):
         "Kernel",
         KernelSVC(n_jobs=4).fit(train_X, train_y).score(test_X, test_y) * 100,
         "    Nu",
-        NuSVC(n_jobs=4).fit(train_X, train_y).score(test_X, test_y) * 100,
+        NuSVC(n_jobs=4, nu=0.1).fit(train_X, train_y).score(test_X, test_y) * 100,
     ))
 
 
@@ -109,13 +76,13 @@ def visual_svr_test():
     model.fit(X, y)
     test_x = np.linspace(X.min(0), X.max(0), 2)
     pred = model.predict(test_x)
-    plt.plot(test_x, pred, label="LinearSVC", color='red')
+    plt.plot(test_x, pred, label="LinearSVR", color='red')
 
     model = KernelSVR(C=10, kernel='poly', degree=2)
     model.fit(X, 0.01 * y**2)
     test_x = np.linspace(X.min(0), X.max(0), 100)
     pred = model.predict(test_x)
-    plt.plot(test_x, pred, label="KernelSVC", color='yellowgreen')
+    plt.plot(test_x, pred, label="KernelSVR", color='yellowgreen')
 
     plt.legend()
     plt.show()
@@ -209,8 +176,3 @@ def visual_one_class_test():
         "error train: %d/200 ;   errors novel regular: %d/40 ;   errors novel abnormal: %d/40"
         % (n_error_train, n_error_test, n_error_outliers))
     plt.show()
-
-visual_svc_test()
-dataset_svc_test()
-visual_svr_test()
-dataset_svr_test()
