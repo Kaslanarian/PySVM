@@ -67,7 +67,7 @@ The examples below can be reproduced in `example.py`.
 
 ### Classify toy datasets
 
-Take breast dataset as example:
+Take breast cancer dataset as example:
 
 ```bash
 LinearSVC's perf : 96.49%
