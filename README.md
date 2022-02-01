@@ -1,5 +1,7 @@
 # PySVM
 
+Use Numpy to implement SVM after reading LIBSVM source code. It supports classification, regression and outlier detection. We add rff(random fourier feature) and caching afterwards.
+
 实现LIBSVM中的SVM算法，对标sklearn中的SVM模块
 
 - [x] LinearSVC
