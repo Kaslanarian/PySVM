@@ -1,3 +1,0 @@
-numpy
-sklearn
-matplotlib # if you want to try same examples in example.py
