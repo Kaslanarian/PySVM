@@ -2,8 +2,8 @@ import numpy as np
 from sklearn.base import BaseEstimator
 from sklearn.metrics import accuracy_score, r2_score
 from sklearn.multiclass import OneVsOneClassifier, OneVsRestClassifier
-from rff import NormalRFF
-from solver import Solver, SolverWithCache, NuSolver, NuSolverWithCache
+from .rff import NormalRFF
+from .solver import Solver, SolverWithCache, NuSolver, NuSolverWithCache
 
 
 class _LinearSVC(BaseEstimator):
@@ -38,10 +38,14 @@ class _LinearSVC(BaseEstimator):
             delta_i, delta_j = solver.update(i, j, func)
             w += delta_i * y[i] * X[i] + delta_j * y[j] * X[j]
         else:
-            print("Not coverage")
+            print("LinearSVC not coverage with {} iterations".format(
+                self.max_iter))
 
-        self.decision_function = lambda x: w @ x.T - solver.calculate_rho()
+        self.coef_ = (w, solver.calculate_rho())
         return self
+
+    def decision_function(self, X):
+        return self.coef_[0] @ np.array(X).T - self.coef_[-1]
 
     def predict(self, X):
         return (self.decision_function(np.array(X)) >= 0).astype(int)
@@ -74,8 +78,10 @@ class LinearSVC(_LinearSVC):
 
     def fit(self, X, y):
         self.multiclass_model.fit(X, y)
-        self.decision_function = self.multiclass_model.decision_function
         return self
+
+    def decision_function(self, X):
+        return self.multiclass_model.decision_function(X)
 
     def predict(self, X):
         return self.multiclass_model.predict(X)
@@ -133,13 +139,17 @@ class LinearSVR(_LinearSVC):
             w += (delta_i * y[i] * X[i if i < l else i - l] +
                   delta_j * y[j] * X[j if j < l else j - l])
         else:
-            print("not coverage")
+            print("LinearSVR not coverage with {} iterations".format(
+                self.max_iter))
 
-        self.decision_function = lambda x: w @ x.T - solver.calculate_rho()
+        self.coef_ = (w, solver.calculate_rho())
         return self
 
+    def decision_function(self, X):
+        return super().decision_function(X)
+
     def predict(self, X):
-        return self.decision_function(np.array(X))
+        return self.decision_function(X)
 
     def score(self, X, y):
         return r2_score(y, self.predict(X))
@@ -216,7 +226,8 @@ class _KernelSVC(_LinearSVC):
                 break
             solver.update(i, j, func)
         else:
-            print("Not coverage")
+            print("KernelSVC not coverage with {} iterations".format(
+                self.max_iter))
 
         self.decision_function = lambda x: np.matmul(
             solver.alpha * y,
@@ -259,6 +270,15 @@ class KernelSVC(LinearSVC, _KernelSVC):
             "ovo": OneVsOneClassifier(**params),
             "ovr": OneVsRestClassifier(**params),
         }[multiclass]
+
+    def decision_function(self, X):
+        return super().decision_function(X)
+
+    def predict(self, X):
+        return super().predict(X)
+
+    def score(self, X, y):
+        return super().score(X, y)
 
 
 class KernelSVR(_KernelSVC):
@@ -313,7 +333,8 @@ class KernelSVR(_KernelSVC):
 
             solver.update(i, j, func)
         else:
-            print("not coverage")
+            print("KernelSVR not coverage with {} iterations".format(
+                self.max_iter))
 
         self.decision_function = lambda x: np.matmul(
             solver.alpha[:l] - solver.alpha[l:],
@@ -369,7 +390,8 @@ class _NuSVC(_KernelSVC):
                 break
             solver.update(i, j, Qi, Qj)
         else:
-            print("Not coverage")
+            print("NuSVC not coverage with {} iterations".format(
+                self.max_iter))
 
         rho, b = solver.calculate_rho_b()
         self.decision_function = lambda x: np.matmul(
@@ -377,6 +399,12 @@ class _NuSVC(_KernelSVC):
             kernel_func(X, x),
         ) / rho + b / rho
         return self
+
+    def predict(self, X):
+        return super().predict(X)
+
+    def score(self, X, y):
+        return super().score(X, y)
 
 
 class NuSVC(KernelSVC, _NuSVC):
@@ -407,6 +435,12 @@ class NuSVC(KernelSVC, _NuSVC):
             "ovo": OneVsOneClassifier(**params),
             "ovr": OneVsRestClassifier(**params),
         }[multiclass]
+
+    def predict(self, X):
+        return super().predict(X)
+
+    def score(self, X, y):
+        return super().score(X, y)
 
 
 class NuSVR(KernelSVR):
@@ -461,14 +495,22 @@ class NuSVR(KernelSVR):
 
             solver.update(i, j, Qi, Qj)
         else:
-            print("not coverage")
+            print("NuSVR not coverage with {} iterations".format(
+                self.max_iter))
 
         rho, b = solver.calculate_rho_b()
         self.decision_function = lambda x: np.matmul(
             solver.alpha[:l] - solver.alpha[l:],
             kernel_func(X, x),
-        ) / rho + b / rho
+        ) + b
+        print(solver.alpha)
         return self
+
+    def predict(self, X):
+        return super().predict(X)
+
+    def score(self, X, y):
+        return super().score(X, y)
 
 
 class OneClassSVM(_NuSVC):
@@ -528,7 +570,8 @@ class OneClassSVM(_NuSVC):
 
             solver.update(i, j, func)
         else:
-            print("not coverage")
+            print("OneClassSVM not coverage with {} iterations".format(
+                self.max_iter))
 
         rho = solver.calculate_rho()
         self.decision_function = lambda x: np.matmul(
@@ -542,3 +585,6 @@ class OneClassSVM(_NuSVC):
         pred[pred <= 0] = -1
         pred[pred > 0] = 1
         return pred
+
+    def score(self, X, y):
+        raise NotImplementedError

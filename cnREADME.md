@@ -18,11 +18,13 @@
 
 2022.01.30 : 删除Solver类，设计针对特定问题的SMO算法。
 
-2022.02.01 : 修改SVR算法中的错误
+2022.02.01 : 修改SVR算法中的错误。
+
+2022.05.27 : 重构代码，将SMO算法求解和SVM解耦，更容易解读。
 
 ## 主要算法
 
-Python(numpy)实现SMO算法，也就是
+Python(NumPy)实现SMO算法，也就是
 
 <img src="src/formula.png" alt="opt" style="zoom:67%;" />
 
@@ -32,31 +34,27 @@ Python(numpy)实现SMO算法，也就是
 
 的优化算法，从而实现支持向量机分类、回归以及异常检测。
 
-## 与sklearn的性能对比
+## Install
 
-`sklearn.svm`模块中支持多种SVM模型，其中线性模型是由LIBLINEAR实现，也就是LinearSVC和LinearSVR模型，其它模型都是由LIBSVM实现，是我们比较的重点。比较指标为模型性能与耗时，实验数据为`sklearn`内置数据集。**我们只比较训练准确率和训练集上的r2**。
+输入
 
-### 分类问题
+```bash
+git clone https://github.com/Kaslanarian/PySVM
+cd PySVM
+python setup.py install
+```
 
-|                 模型\数据集 |  Iris  | Breast Cancer |  Wine  | Digits |
-| --------------------------: | :----: | :-----------: | :----: | :----: |
-|       PySVM.LinearSVC(C=10) | 97.33% |    97.53%     |  100%  | 96.88% |
-| sklearn.svm.LInearSVC(C=10) | 96.67% |    98.95%     |  100%  | 99.67% |
-|       PySVM.KernelSVC(C=10) | 98.67% |    99.47%     |  100%  |  100%  |
-|       sklearn.svm.SVC(C=10) | 98.67% |    99.12%     |  100%  |  100%  |
-|          PySVM.NuSVC(ν=0.5) | 97.33% |    95.08%     | 94.38% | 96.93% |
-|    sklearn.svm.NuSVC(ν=0.5) | 96.67% |    94.55%     | 98.88% | 96.67% |
+进行安装，运行一个简单例子
 
-上表是我们设计的模型与sklearn中SVM模型在实验数据集上的表现，PySVM.*表示我们设计的模型，相同模型的参数相同。下面比较模型计算时间(独立重复运行10次的平均时间，单位:s)，考虑到我们的算法是Python实现，所以显然无法和C++实现的LIBSVM和LIBLINEAR媲美，我们的目标是尽可能加速模型。
-
-|                 模型\数据集 | Iris  | Breast Cancer | Wine  | Digits |
-| --------------------------: | :---: | :-----------: | :---: | :----: |
-|       PySVM.LinearSVC(C=10) | 0.025 |     0.083     | 0.019 | 1.466  |
-| sklearn.svm.LInearSVC(C=10) | 0.007 |     0.008     | 0.002 | 0.191  |
-|       PySVM.KernelSVC(C=10) | 0.021 |     0.066     | 0.021 | 1.638  |
-|       sklearn.svm.SVC(C=10) | 0.002 |     0.015     | 0.003 | 0.799  |
-|          PySVM.NuSVC(ν=0.5) | 0.021 |     0.043     | 0.024 | 1.913  |
-|    sklearn.svm.NuSVC(ν=0.5) | 0.004 |     0.032     | 0.005 | 0.628  |
+```python
+>>> from sklearn.datasets import load_iris
+>>> from pysvm import LinearSVC
+>>> X, y = load_iris(return_X_y=True)
+>>> X = (X - X.mean(0)) / X.std(0) # 标准化
+>>> clf = LinearSVC().fit(X, y) # 训练模型
+>>> clf.score(X, y) # 准确率
+0.94
+```
 
 ## SVM效果及可视化
 

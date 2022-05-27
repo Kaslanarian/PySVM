@@ -12,7 +12,6 @@ class Solver:
 
     without cache mechanism.
     '''
-
     def __init__(self, Q, p, y, C, tol=1e-5) -> None:
         problem_size = p.shape[0]
         assert problem_size == y.shape[0]
@@ -171,7 +170,6 @@ class NuSolver(Solver):
            e^T a = t\n
            0 <= a_i <= C\n
     '''
-
     def __init__(self, Q, p, y, t, C, tol=1e-5) -> None:
         super().__init__(Q, p, y, C, tol)
         problem_size = p.shape[0]
@@ -199,50 +197,65 @@ class NuSolver(Solver):
             np.logical_or(
                 np.logical_and(self.alpha < 1, self.y > 0),
                 np.logical_and(self.alpha > 0, self.y < 0),
-            )).reshape(-1)
+            )).flatten()
         Ilow = np.argwhere(
             np.logical_or(
                 np.logical_and(self.alpha < 1, self.y < 0),
                 np.logical_and(self.alpha > 0, self.y > 0),
-            )).reshape(-1)
+            )).flatten()
 
-        Imp = Iup[self.y[Iup] > 0]
-        IMp = Ilow[self.y[Ilow] > 0]
-        Imn = Iup[self.y[Iup] < 0]
-        IMn = Ilow[self.y[Ilow] < 0]
+        pos_fail, neg_fail = False, False
+        try:
+            Imp = Iup[self.y[Iup] > 0]
+            IMp = Ilow[self.y[Ilow] > 0]
+            i_p = Imp[np.argmax(self.neg_y_grad[Imp])]
 
-        i_p = Imp[np.argmax(self.neg_y_grad[Imp])]
-        i_n = Imn[np.argmax(self.neg_y_grad[Imn])]
+            grad_diff = self.neg_y_grad[IMp] - self.neg_y_grad[i_p]
+            Qip = self.get_Q(i_p, func)
+            quad_coef = Qip[i_p] + self.QD[IMp] - 2 * Qip[IMp]
+            quad_coef[quad_coef <= 0] = 1e-12
+            obj_diff_p = -grad_diff**2 / quad_coef
+            argmin = np.argmin(obj_diff_p)
+            j_p = IMp[argmin]
+            min_p = obj_diff_p[argmin]
 
-        grad_diff = self.neg_y_grad[IMp] - self.neg_y_grad[i_p]
-        Qip = self.get_Q(i_p, func)
-        quad_coef = Qip[i_p] + self.QD[IMp] - 2 * Qip[IMp]
-        quad_coef[quad_coef <= 0] = 1e-12
-        obj_diff_p = -grad_diff**2 / quad_coef
-        argmin = np.argmin(obj_diff_p)
-        j_p = IMp[argmin]
-        min_p = obj_diff_p[argmin]
+            m_p = self.neg_y_grad[i_p]
+            M_p = self.neg_y_grad[j_p]
+        except:
+            pos_fail = True
 
-        grad_diff = self.neg_y_grad[IMn] - self.neg_y_grad[i_n]
-        Qin = self.get_Q(i_n, func)
-        quad_coef = Qin[i_n] + self.QD[IMn] - 2 * Qin[IMn]
-        quad_coef[quad_coef <= 0] = 1e-12
-        obj_diff_n = -grad_diff**2 / quad_coef
-        argmin = np.argmin(obj_diff_n)
-        j_n = IMn[argmin]
-        min_n = obj_diff_n[argmin]
+        try:
+            Imn = Iup[self.y[Iup] < 0]
+            IMn = Ilow[self.y[Ilow] < 0]
+            i_n = Imn[np.argmax(self.neg_y_grad[Imn])]
 
-        m_p = self.neg_y_grad[i_p]
-        M_p = self.neg_y_grad[j_p]
-        m_n = self.neg_y_grad[i_n]
-        M_n = self.neg_y_grad[j_n]
+            grad_diff = self.neg_y_grad[IMn] - self.neg_y_grad[i_n]
+            Qin = self.get_Q(i_n, func)
+            quad_coef = Qin[i_n] + self.QD[IMn] - 2 * Qin[IMn]
+            quad_coef[quad_coef <= 0] = 1e-12
+            obj_diff_n = -grad_diff**2 / quad_coef
+            argmin = np.argmin(obj_diff_n)
+            j_n = IMn[argmin]
+            min_n = obj_diff_n[argmin]
 
-        if max(m_p - M_p, m_n - M_n) < self.tol:
-            return -1, -1, -1, -1
-        if min_p < min_n:
+            m_n = self.neg_y_grad[i_n]
+            M_n = self.neg_y_grad[j_n]
+        except:
+            neg_fail = True
+
+        if not pos_fail and not neg_fail:
+            if max(m_p - M_p, m_n - M_n) < self.tol:
+                return -1, -1, -1, -1
+            elif min_p < min_n:
+                return i_p, j_p, Qip, self.get_Q(j_p, func)
+            else:
+                return i_n, j_n, Qin, self.get_Q(j_n, func)
+        elif pos_fail and not neg_fail:
+            return i_n, j_n, Qin, self.get_Q(j_n, func)
+        elif not pos_fail and neg_fail:
             return i_p, j_p, Qip, self.get_Q(j_p, func)
-        return i_n, j_n, Qin, self.get_Q(j_n, func)
-
+        else:
+            return -1, -1, -1, -1
 
     def update(self, i, j, Qi, Qj):
         alpha_i, alpha_j = self.alpha[i], self.alpha[j]
@@ -339,8 +352,8 @@ class NuSolverWithCache(NuSolver, SolverWithCache):
         assert problem_size == y.shape[0]
 
         sum_pos = sum_neg = t / 2
-        self.alpha = np.empty(problem_size)
-        self.neg_y_grad = np.empty(problem_size)
+        self.alpha = np.zeros(problem_size)
+        self.neg_y_grad = np.zeros(problem_size)
 
         for i in range(problem_size):
             if self.y[i] == 1:
@@ -350,10 +363,12 @@ class NuSolverWithCache(NuSolver, SolverWithCache):
                 self.alpha[i] = min(1., sum_neg)
                 sum_neg -= self.alpha[i]
 
+        QD = []
         for i in range(problem_size):
-            self.neg_y_grad[i] = self.get_Q(i, func) @ self.alpha
-        self.neg_y_grad = -self.y * (self.neg_y_grad + self.p)
-        self.QD = np.array([func(i)[i] for i in range(problem_size)])
+            self.neg_y_grad[i] = self.get_Q(i, func) @ self.alpha + self.p[i]
+            QD.append(self.get_Q(i, func)[i])
+        self.neg_y_grad *= -self.y
+        self.QD = np.array(QD)
 
     def working_set_select(self, func=None):
         return super().working_set_select(func)
