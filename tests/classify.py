@@ -4,7 +4,7 @@ from sklearn.datasets import load_iris, load_breast_cancer, load_digits, load_wi
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 
-# np.random.seed(1)
+np.random.seed(42)
 
 score = []
 for load_dataset in [load_iris, load_wine, load_breast_cancer, load_digits]:

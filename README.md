@@ -1,94 +1,123 @@
-# PySVM：A implementation of SVM using SMO algorithm
+# PySVM : A NumPy implementation of SVM based on SMO algorithm
 
-Chinese version : [cnREADME.md](https://github.com/Kaslanarian/PySVM/blob/main/cnREADME.md)
+实现LIBSVM中的SVM算法，对标sklearn中的SVM模块
 
-Use numpy to implement SVM after reading LIBSVM source code. **PySVM** supports classification, regression and outlier detection (same as `sklearn.svm`). In fact, we have built all SVM models in [sklearn](https://scikit-learn.org/stable/auto_examples/index.html#support-vector-machines):
+- [x] LinearSVC
+- [x] KernelSVC
+- [x] NuSVC
+- [x] LinearSVR
+- [x] KernelSVR
+- [x] NuSVR 
+- [x] OneClassSVM
 
-- [x] MultiLinearSVC(equals to `LinearSVC` in sklearn);
-- [x] MultiKernelSVC(equals to `SVC` in sklearn);
-- [x] MultiNuSVC(equals to `NuSVC` in sklearn);
-- [x] LinearSVR(equals to `LinearSVR` in sklearn);
-- [x] KernelSVR(equals to `SVR` in sklearn);
-- [x] NuSVR(equals to `NuSVR` in sklearn);
-- [x] OneClassSVM(equals to `OneClassSVM` in sklearn).
+2021.11.05 : 加入了高斯核函数的RFF方法。
 
-Pay attention to LinearSVC, it is implemented by [LINLINEAR](https://www.csie.ntu.edu.tw/~cjlin/liblinear/) in sklearn, which is a better SVM software.
+2022.01.27 : 通过向量化运算对算法进行提速，加入性能对比。
 
-## Highlight
+2022.01.28 : 加入缓存机制，解决大数据下Q矩阵的缓存问题，参考<https://welts.xyz/2022/01/28/cache/>。
 
-As a self-made SVM, PySVM has several hightlights:
+2022.01.30 : 删除Solver类，设计针对特定问题的SMO算法。
 
-1. PySVM uses only `numpy` to implement SMO algorithm, without any optimization package such as `cvxopt`;
-2. PySVM use caching to calculate Q matrix like LIBSVM, which means it can train any large dataset theoretically.
-3. PySVM supports random fourier features(RFF) to calculate Gaussian kernel. It's a nice try because neither LIBSVM nor LIBLINEAR supports it.
-4. PySVM uses a similar way to train, test a model and parameter selection compared to `sklearn.svm`, in order to better help you to use.
+2022.02.01 : 修改SVR算法中的错误。
 
-## How to use
+2022.05.27 : 重构代码，将SMO算法求解和SVM解耦，更容易解读。
 
-Type the following command to obtain the code:
+## 主要算法
+
+Python(NumPy)实现SMO算法，也就是
+
+<img src="src/formula.png" alt="opt" style="zoom:67%;" />
+
+和
+
+<img src="src/nu-formula.png" alt="opt" style="zoom:67%;" />
+
+的优化算法，从而实现支持向量机分类、回归以及异常检测。
+
+## Framework
+
+我们实现了线性SVM，核SVM，用于分类，回归和异常检测:
+
+```mermaid
+graph 
+	PySVM --> LinearSVM
+	PySVM --> KernelSVM
+	PySVM --> NuSVM
+	LinearSVM --> LinearSVC
+	LinearSVM --> LinearSVR
+	KernelSVM --> KernelSVC
+	KernelSVM --> KernelSVR
+	KernelSVM --> OneClassSVM
+	NuSVM --> NuSVC
+	NuSVM --> NuSVR
+```
+
+设计框架：
+
+```mermaid
+graph BT
+	cache(LRU Cache) --> Solver
+	Solver --> LinearSVM
+	LinearSVM --> KernelSVM
+	Kernel --> KernelSVM
+	RFF --> Kernel
+	mc(sklearn.multiclass) --> LinearSVM
+	mc --> NuSVM
+	NuSolver --> NuSVM
+	Kernel --> NuSVM
+	cache --> NuSolver
+```
+
+其中RFF表示随机傅里叶特征，LRU Cache缓存机制用于处理极大数据的场景。
+
+## Install
+
+输入
 
 ```bash
 git clone https://github.com/Kaslanarian/PySVM
 cd PySVM
-pip3 install -r requirements.txt
+python setup.py install
 ```
 
-There are several examples in `example.py`. They can tell you how to run code. You can start it quickly as long as you know how to use sklearn.
+进行安装，运行一个简单例子
 
-## Experiments
-
-We conduct some experiments to show the distance between our Python models and state-of-art sklearn. Take classfication as examples, we use toy-datasets in `sklearn.datasets`。
-
-|                 Model\Dataset |  Iris  | Breast Cancer |  Wine  | Digits |
-| --------------------------: | :----: | :-----------: | :----: | :----: |
-|       PySVM.LinearSVC(C=10) | 97.33% |    97.53%     |  100%  | 96.88% |
-| sklearn.svm.LInearSVC(C=10) | 96.67% |    98.95%     |  100%  | 99.67% |
-|       PySVM.KernelSVC(C=10) | 98.67% |    99.47%     |  100%  |  100%  |
-|       sklearn.svm.SVC(C=10) | 98.67% |    99.12%     |  100%  |  100%  |
-|          PySVM.NuSVC(ν=0.5) | 97.33% |    95.08%     | 94.38% | 96.93% |
-|    sklearn.svm.NuSVC(ν=0.5) | 96.67% |    94.55%     | 98.88% | 96.67% |
-
-We compare the training time(s) below, run 5 times repeatedly and take average:
-
-|                 model\dataset | Iris  | Breast Cancer | Wine  | Digits |
-| --------------------------: | :---: | :-----------: | :---: | :----: |
-|       PySVM.LinearSVC(C=10) | 0.025 |     0.083     | 0.019 | 1.466  |
-| sklearn.svm.LInearSVC(C=10) | 0.007 |     0.008     | 0.002 | 0.191  |
-|       PySVM.KernelSVC(C=10) | 0.021 |     0.066     | 0.021 | 1.638  |
-|       sklearn.svm.SVC(C=10) | 0.002 |     0.015     | 0.003 | 0.799  |
-|          PySVM.NuSVC(ν=0.5) | 0.021 |     0.043     | 0.024 | 1.913  |
-|    sklearn.svm.NuSVC(ν=0.5) | 0.004 |     0.032     | 0.005 | 0.628  |
-
-Considering that Python runs much slower than Cpp, our pure-python implementation is not bad.
+```python
+>>> from sklearn.datasets import load_iris
+>>> from pysvm import LinearSVC
+>>> X, y = load_iris(return_X_y=True)
+>>> X = (X - X.mean(0)) / X.std(0) # 标准化
+>>> clf = LinearSVC().fit(X, y) # 训练模型
+>>> clf.score(X, y) # 准确率
+0.94
+```
 
 ## Examples
 
-The examples below can be reproduced in `example.py`.
+在[`tests`](.tests/)中，有三个例子，分别是：
 
-### Classify toy datasets
+- 使用三种SVM对sklearn自带数据集分类（默认参数、选取20%数据作为测试数据、数据经过标准化）：
 
-Take breast cancer dataset as example:
+  |            |  Iris   |  Wine   | Breast Cancer | Digits  |
+  | :--------: | :-----: | :-----: | :-----------: | :-----: |
+  | Linear SVC | 97.368% |  100%   |     100%      |  100%   |
+  | Kernel SVC | 97.778% | 97.778% |    96.503%    | 95.105% |
+  |   NuSVC    | 87.413% | 95.111% |    97.778%    | 91.556% |
 
-```bash
-LinearSVC's perf : 96.49%
-KernelSVC's perf : 97.08%
-    NuSVC's perf : 97.08%
-```
+- 用SVR拟合数据：
 
-### Regression of self-made dataset
+  ![regression](src/regression.png)
 
-<img src="src/2.png" alt="2" style="zoom:67%;" />
+- 用OneClassSVM进行异常检测：
 
-### Regression of toy dataset
+  ![oc_svm](src/oc_svm.png)
 
-Take boston dataset as a example:
+## Current work
 
-```bash
-LinearSVR's perf : 0.6836600895151972
-KernelSVR's perf : 0.7090334672613672
-    NuSVR's perf : 0.5200503832063063
-```
+1. 自实现的NuSVM在各种情况下表现不好，正在查找问题；
+2. 文档的撰写。
 
-### Use one-class SVM to do outlier detection
+## Reference
 
-<img src="src/3.png" alt="3" style="zoom:67%;" />
+- Chang, Chih-Chung, and Chih-Jen Lin. "LIBSVM: a library for support vector machines." ACM transactions on intelligent systems and technology (TIST) 2.3 (2011): 1-27.
+- https://github.com/Kaslanarian/libsvm-sc-reading : 阅读LibSVM源码的知识整理与思考.

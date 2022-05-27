@@ -195,12 +195,12 @@ class NuSolver(Solver):
     def working_set_select(self, func=None):
         Iup = np.argwhere(
             np.logical_or(
-                np.logical_and(self.alpha < 1, self.y > 0),
+                np.logical_and(self.alpha < self.C, self.y > 0),
                 np.logical_and(self.alpha > 0, self.y < 0),
             )).flatten()
         Ilow = np.argwhere(
             np.logical_or(
-                np.logical_and(self.alpha < 1, self.y < 0),
+                np.logical_and(self.alpha < self.C, self.y < 0),
                 np.logical_and(self.alpha > 0, self.y > 0),
             )).flatten()
 
@@ -262,8 +262,8 @@ class NuSolver(Solver):
         quad_coef = Qi[i] + Qj[j] - 2 * Qi[j]
         if quad_coef <= 0:
             quad_coef = 1e-12
-        delta = -(self.y[i] * self.neg_y_grad[i] -
-                  self.y[j] * self.neg_y_grad[j]) / quad_coef
+        delta = self.y[i] * (self.neg_y_grad[j] -
+                             self.neg_y_grad[i]) / quad_coef
 
         sum = alpha_i + alpha_j
         self.alpha[i] -= delta

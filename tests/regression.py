@@ -1,7 +1,13 @@
-from sklearn.datasets import fetch_california_housing, load_boston, load_diabetes, make_regression
+from sklearn.datasets import make_regression
 import matplotlib.pyplot as plt
 import numpy as np
-from pysvm import LinearSVR, KernelSVR, NuSVR
+from pysvm import LinearSVR, KernelSVR
+
+try:
+    import seaborn as sns
+    sns.set()
+except:
+    pass
 
 RANDOM_STATE = 2022
 
@@ -18,16 +24,11 @@ test_x = np.linspace(X.min(0), X.max(0), 2)
 pred = model.predict(test_x)
 plt.plot(test_x, pred, label="LinearSVR", color='red')
 
-model = NuSVR(kernel='poly', degree=2)
+model = KernelSVR(kernel='poly', degree=2, C=10)
 model.fit(X, 0.01 * y**2)
 test_x = np.linspace(X.min(0), X.max(0), 100)
 pred = model.predict(test_x)
 plt.plot(test_x, pred, label="KernelSVR", color='yellowgreen')
 
 plt.legend()
-plt.show()
-
-# X, y = load_diabetes(return_X_y=True)
-# X = (X - X.mean(0)) / X.std(0)
-# model = NuSVR(cache_size=256, C=1000).fit(X, y)
-# print(model.score(X, y))
+plt.savefig("../src/regression.png")

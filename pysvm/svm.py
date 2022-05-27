@@ -465,7 +465,7 @@ class NuSVR(KernelSVR):
         l, self.n_features = X.shape
 
         y = np.empty(2 * l)
-        y[:l], y[l:] = 1., -1.
+        y[:l], y[l:] = 1, -1
 
         p = np.empty(2 * l)
         p[:l], p[l:] = -z, z
@@ -487,6 +487,7 @@ class NuSVR(KernelSVR):
         else:
             solver = NuSolverWithCache(p, y, self.C * l * self.nu, self.C,
                                        func, self.tol, self.cache_size)
+        
 
         for n_iter in range(self.max_iter):
             i, j, Qi, Qj = solver.working_set_select(func)
@@ -503,7 +504,6 @@ class NuSVR(KernelSVR):
             solver.alpha[:l] - solver.alpha[l:],
             kernel_func(X, x),
         ) + b
-        print(solver.alpha)
         return self
 
     def predict(self, X):
