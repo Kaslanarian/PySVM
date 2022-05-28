@@ -94,28 +94,39 @@ python setup.py install
 
 ## Examples
 
-在[`tests`](.tests/)中，有三个例子，分别是：
+在[`tests`](./tests)中，有5个例子，分别是：
 
-- 使用三种SVM对sklearn自带数据集分类（默认参数、选取20%数据作为测试数据、数据经过标准化）：
+- [dataset_classify.py](./tests/dataset_classify.py), 使用三种SVM对sklearn自带数据集分类（默认参数、选取20%数据作为测试数据、数据经过标准化）：
 
-  |            |  Iris   |  Wine   | Breast Cancer | Digits  |
-  | :--------: | :-----: | :-----: | :-----------: | :-----: |
-  | Linear SVC | 97.368% |  100%   |     100%      |  100%   |
-  | Kernel SVC | 97.778% | 97.778% |    96.503%    | 95.105% |
-  |   NuSVC    | 87.413% | 95.111% |    97.778%    | 91.556% |
+    |  Accuracy  |  Iris   |  Wine   | Breast Cancer | Digits  |
+    | :--------: | :-----: | :-----: | :-----------: | :-----: |
+    | Linear SVC | 94.737% | 97.778% |    96.503%    | 95.556% |
+    | Kernel SVC | 97.368% | 97.778% |    96.503%    | 98.222% |
+    |   NuSVC    | 97.368% | 97.778% |    92.308%    | 92.222% |
 
-- 用SVR拟合数据：
+- [dataset_regression.py](./tests/dataset_regression.py), 使用三种SVM对sklearn自带数据集回归（默认参数、选取20%数据作为测试数据、数据经过标准化）：
 
-  ![regression](src/regression.png)
+    |  R2 score  | Boston | Diabetes |
+    | :--------: | :----: | :------: |
+    | Linear SVR | 0.6570 |  0.4537  |
+    | Kernel SVR | 0.6992 |  0.1756  |
+    |   NuSVR    | 0.6800 |  0.1459  |
 
-- 用OneClassSVM进行异常检测：
+- [visual_classify.py](./tests/visual_classify.py)，分别用LinearSVC和KernelSVC对人工构造的二分类数据集进行分类，画出分类结果图像和决策函数值图像：
+  
+  ![visual_classify](./src/visual_classify.png)
+
+- [visual_regression.py](./tests/visual_regression.py)用三种SVR拟合三种不同的数据：线性数据，二次函数和三角函数：
+
+  ![regression](src/visual_regression.png)
+
+- [visual_outlier.py](./tests/visual_outlier.py)用OneClassSVM进行异常检测：
 
   ![oc_svm](src/oc_svm.png)
 
 ## Current work
 
-1. 自实现的NuSVM在各种情况下表现不好，正在查找问题；
-2. 文档的撰写。
+- 文档的撰写。
 
 ## Reference
 
