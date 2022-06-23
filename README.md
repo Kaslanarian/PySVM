@@ -2,19 +2,13 @@
 
 实现LIBSVM中的SVM算法，对标sklearn中的SVM模块
 
-[x] LinearSVC
-
-[x] KernelSVC
-
-[x] NuSVC
-
-[x] LinearSVR
-
-[x] KernelSVR
-
-[x] NuSVR
-
-[x] OneClassSVM
+- [x] LinearSVC
+- [x] KernelSVC
+- [x] NuSVC
+- [x] LinearSVR
+- [x] KernelSVR
+- [x] NuSVR
+- [x] OneClassSVM
 
 2021.11.05 : 加入了高斯核函数的RFF方法。
 
