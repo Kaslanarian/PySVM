@@ -131,7 +131,7 @@ and returns a transformed version of <cite>X</cite>.</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}\min_{\pmb\alpha}\quad&amp;\frac12\pmb\alpha^T\pmb Q\pmb\alpha+\pmb p^T\pmb\alpha\\
 \text{s.t.}\quad&amp;\pmb y^T\pmb\alpha=0\\
-&amp;\pmb e^T\pmb\alpha=\t\\
+&amp;\pmb e^T\pmb\alpha=t\\
 &amp;0\leq\alpha_i\leq C,i=1,\cdots,l\end{split}\]</div>
 <dl class="field-list simple">
 <dt class="field-odd">参数</dt>
@@ -353,605 +353,13 @@ j&amp;\in\arg\max_{t}\{-y_t\nabla_tf(\pmb\alpha)|t\in\pmb{I}_{low}(\pmb\alpha)\}
 </section>
 <section id="module-pysvm.svm">
 <span id="pysvm-svm-module"></span><h2>pysvm.svm module<a class="headerlink" href="#module-pysvm.svm" title="永久链接至标题"></a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="pysvm.svm.BiKernelSVC">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pysvm.svm.</span></span><span class="sig-name descname"><span class="pre">BiKernelSVC</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">C</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'rbf'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">degree</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'scale'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coef0</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rff</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">D</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1e-05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">256</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pysvm.svm.BiKernelSVC" title="永久链接至目标"></a></dt>
-<dd><p>基类：<a class="reference internal" href="#pysvm.svm.BiLinearSVC" title="pysvm.svm.BiLinearSVC"><code class="xref py py-class docutils literal notranslate"><span class="pre">pysvm.svm.BiLinearSVC</span></code></a></p>
-<p>二分类核SVM，该类被多分类KernelSVC继承，所以不需要使用它。优化问题与BiLinearSVC相同，只是Q矩阵定义不同。</p>
-<p>此时的决策边界</p>
-<div class="math notranslate nohighlight">
-\[f(\pmb x)=\sum_{i=1}^ly_i\alpha_i K(\pmb x_i, \pmb x)-\rho\]</div>
-<dl class="field-list simple">
-<dt class="field-odd">参数</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>C</strong> (<em>float</em><em>, </em><em>default=1</em>) – SVM的正则化参数，默认为1；</p></li>
-<li><p><strong>kernel</strong> (<em>{&quot;linear&quot;</em><em>, </em><em>&quot;poly&quot;</em><em>, </em><em>&quot;rbf&quot;</em><em>, </em><em>&quot;sigmoid&quot;}</em><em>, </em><em>default=&quot;rbf&quot;</em>) – 核函数，默认径向基函数(RBF)；</p></li>
-<li><p><strong>degree</strong> (<em>float</em><em>, </em><em>default=3</em>) – 多项式核的次数，默认3；</p></li>
-<li><p><strong>gamma</strong> (<em>{&quot;scale&quot;</em><em>, </em><em>&quot;auto&quot;</em><em>, </em><em>float}</em><em>, </em><em>default=&quot;scale&quot;</em>) – rbf、ploy和sigmoid核的参数 <span class="math notranslate nohighlight">\(\gamma\)</span>，如果用’scale’，那么就是1 / (n_features * X.var())，如果用’auto’，那么就是1 / n_features；</p></li>
-<li><p><strong>coef0</strong> (<em>float</em><em>, </em><em>default=0.</em>) – 核函数中的独立项。它只在”poly”和”sigmoid”中有意义；</p></li>
-<li><p><strong>max_iter</strong> (<em>int</em><em>, </em><em>default=1000</em>) – SMO算法迭代次数，默认1000；</p></li>
-<li><p><strong>rff</strong> (<em>bool</em><em>, </em><em>default=False</em>) – 是否采用随机傅里叶特征，默认为False；</p></li>
-<li><p><strong>D</strong> (<em>int</em><em>, </em><em>default=1000</em>) – 随机傅里叶特征的采样次数，默认为1000；</p></li>
-<li><p><strong>tol</strong> (<em>float</em><em>, </em><em>default=1e-5</em>) – SMO算法的容忍度参数，默认1e-5；</p></li>
-<li><p><strong>cache_size</strong> (<em>int</em><em>, </em><em>default=256</em>) – lru缓存大小，默认256，如果为0则不使用缓存，计算Q矩阵然后求解.</p></li>
-</ul>
-</dd>
-</dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="pysvm.svm.BiKernelSVC.fit">
-<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pysvm.svm.BiKernelSVC.fit" title="永久链接至目标"></a></dt>
-<dd><p>训练模型</p>
-<dl class="field-list simple">
-<dt class="field-odd">参数</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>X</strong> (<em>np.ndarray</em>) – 训练集特征;</p></li>
-<li><p><strong>y</strong> (<em>np.array</em>) – 训练集标签，建议0为负标签，1为正标签.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pysvm.svm.BiKernelSVC.predict">
-<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.ndarray</span></span></span><a class="headerlink" href="#pysvm.svm.BiKernelSVC.predict" title="永久链接至目标"></a></dt>
-<dd><p>预测函数，输出预测标签(0-1)</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pysvm.svm.BiKernelSVC.register_kernel">
-<span class="sig-name descname"><span class="pre">register_kernel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pysvm.svm.BiKernelSVC.register_kernel" title="永久链接至目标"></a></dt>
-<dd><p>注册核函数</p>
-<dl class="field-list simple">
-<dt class="field-odd">参数</dt>
-<dd class="field-odd"><p><strong>std</strong> (<em>输入数据的标准差，用于rbf='scale'的情况</em>) – </p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pysvm.svm.BiKernelSVC.score">
-<span class="sig-name descname"><span class="pre">score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#pysvm.svm.BiKernelSVC.score" title="永久链接至目标"></a></dt>
-<dd><p>评估函数，给定特征和标签，输出正确率</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="pysvm.svm.BiLinearSVC">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pysvm.svm.</span></span><span class="sig-name descname"><span class="pre">BiLinearSVC</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">C</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1e-05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">256</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pysvm.svm.BiLinearSVC" title="永久链接至目标"></a></dt>
-<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">sklearn.base.BaseEstimator</span></code></p>
-<p>二分类线性SVM，该类被多分类LinearSVC继承，所以不需要使用它。</p>
-<p>通过求解对偶问题</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}\min_{\pmb\alpha}\quad&amp;\dfrac12\pmb\alpha^\top Q\pmb\alpha-\pmb{e}^\top\pmb{\alpha}\\
-\text{s.t.}\quad&amp; \pmb{y}^\top\pmb\alpha=0,\\
-&amp;0\leqslant\alpha_i\leqslant C,i=1,\cdots ,l\end{split}\]</div>
-<p>得到决策边界</p>
-<div class="math notranslate nohighlight">
-\[f(\pmb x)=\sum_{i=1}^ly_i\alpha_i\pmb x_i^T\pmb x-\rho\]</div>
-<dl class="field-list simple">
-<dt class="field-odd">参数</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>C</strong> (<em>float</em><em>, </em><em>default=1</em>) – SVM的正则化参数，默认为1；</p></li>
-<li><p><strong>max_iter</strong> (<em>int</em><em>, </em><em>default=1000</em>) – SMO算法迭代次数，默认1000；</p></li>
-<li><p><strong>tol</strong> (<em>float</em><em>, </em><em>default=1e-5</em>) – SMO算法的容忍度参数，默认1e-5；</p></li>
-<li><p><strong>cache_size</strong> (<em>int</em><em>, </em><em>default=256</em>) – lru缓存大小，默认256，如果为0则不使用缓存，计算Q矩阵然后求解.</p></li>
-</ul>
-</dd>
-</dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="pysvm.svm.BiLinearSVC.decision_function">
-<span class="sig-name descname"><span class="pre">decision_function</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.ndarray</span></span></span><a class="headerlink" href="#pysvm.svm.BiLinearSVC.decision_function" title="永久链接至目标"></a></dt>
-<dd><p>决策函数，输出预测值</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pysvm.svm.BiLinearSVC.fit">
-<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pysvm.svm.BiLinearSVC.fit" title="永久链接至目标"></a></dt>
-<dd><p>训练模型</p>
-<dl class="field-list simple">
-<dt class="field-odd">参数</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>X</strong> (<em>np.ndarray</em>) – 训练集特征;</p></li>
-<li><p><strong>y</strong> (<em>np.array</em>) – 训练集标签，建议0为负标签，1为正标签.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pysvm.svm.BiLinearSVC.predict">
-<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.ndarray</span></span></span><a class="headerlink" href="#pysvm.svm.BiLinearSVC.predict" title="永久链接至目标"></a></dt>
-<dd><p>预测函数，输出预测标签(0-1)</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pysvm.svm.BiLinearSVC.score">
-<span class="sig-name descname"><span class="pre">score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#pysvm.svm.BiLinearSVC.score" title="永久链接至目标"></a></dt>
-<dd><p>评估函数，给定特征和标签，输出正确率</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="pysvm.svm.BiNuSVC">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pysvm.svm.</span></span><span class="sig-name descname"><span class="pre">BiNuSVC</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nu</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'rbf'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">degree</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'scale'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coef0</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rff</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">D</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1e-05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">256</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pysvm.svm.BiNuSVC" title="永久链接至目标"></a></dt>
-<dd><p>基类：<a class="reference internal" href="#pysvm.svm.BiKernelSVC" title="pysvm.svm.BiKernelSVC"><code class="xref py py-class docutils literal notranslate"><span class="pre">pysvm.svm.BiKernelSVC</span></code></a></p>
-<p>二分类NuSVM，通过参数 :math:<a href="#id1"><span class="problematic" id="id2">`</span></a>nu`来控制支持向量的数量。</p>
-<p>通过求解对偶问题</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}\min_{\pmb\alpha}\quad&amp;\dfrac12\pmb\alpha^\top Q\pmb\alpha\\
-\text{s.t.}\quad&amp;0\leqslant\alpha_i\leqslant\frac{1}{l},,i=1,\cdots,l\\
-&amp;\pmb{e}^\top\pmb\alpha\geqslant \nu,\pmb y^\top\pmb{\alpha}=0\end{split}\]</div>
-<p>得到决策边界</p>
-<div class="math notranslate nohighlight">
-\[f(\pmb x)=\sum_{i=1}^ly_i\alpha_i\pmb K(\pmb x_i,\pmb x)-\rho\]</div>
-<dl class="field-list simple">
-<dt class="field-odd">参数</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>nu</strong> (<em>float</em><em>, </em><em>default=0.5</em>) – NuSVM的参数，控制支持向量的数量；</p></li>
-<li><p><strong>kernel</strong> (<em>{&quot;linear&quot;</em><em>, </em><em>&quot;poly&quot;</em><em>, </em><em>&quot;rbf&quot;</em><em>, </em><em>&quot;sigmoid&quot;}</em><em>, </em><em>default=&quot;rbf&quot;</em>) – 核函数，默认径向基函数(RBF)；</p></li>
-<li><p><strong>degree</strong> (<em>float</em><em>, </em><em>default=3</em>) – 多项式核的次数，默认3；</p></li>
-<li><p><strong>gamma</strong> (<em>{&quot;scale&quot;</em><em>, </em><em>&quot;auto&quot;</em><em>, </em><em>float}</em><em>, </em><em>default=&quot;scale&quot;</em>) – rbf、ploy和sigmoid核的参数 <span class="math notranslate nohighlight">\(\gamma\)</span>，如果用’scale’，那么就是1 / (n_features * X.var())，如果用’auto’，那么就是1 / n_features；</p></li>
-<li><p><strong>coef0</strong> (<em>float</em><em>, </em><em>default=0.</em>) – 核函数中的独立项。它只在”poly”和”sigmoid”中有意义；</p></li>
-<li><p><strong>max_iter</strong> (<em>int</em><em>, </em><em>default=1000</em>) – SMO算法迭代次数，默认1000；</p></li>
-<li><p><strong>rff</strong> (<em>bool</em><em>, </em><em>default=False</em>) – 是否采用随机傅里叶特征，默认为False；</p></li>
-<li><p><strong>D</strong> (<em>int</em><em>, </em><em>default=1000</em>) – 随机傅里叶特征的采样次数，默认为1000；</p></li>
-<li><p><strong>tol</strong> (<em>float</em><em>, </em><em>default=1e-5</em>) – SMO算法的容忍度参数，默认1e-5；</p></li>
-<li><p><strong>cache_size</strong> (<em>int</em><em>, </em><em>default=256</em>) – lru缓存大小，默认256，如果为0则不使用缓存，计算Q矩阵然后求解.</p></li>
-</ul>
-</dd>
-</dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="pysvm.svm.BiNuSVC.fit">
-<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pysvm.svm.BiNuSVC.fit" title="永久链接至目标"></a></dt>
-<dd><p>训练模型</p>
-<dl class="field-list simple">
-<dt class="field-odd">参数</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>X</strong> (<em>np.ndarray</em>) – 训练集特征;</p></li>
-<li><p><strong>y</strong> (<em>np.array</em>) – 训练集标签，建议0为负标签，1为正标签.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pysvm.svm.BiNuSVC.predict">
-<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pysvm.svm.BiNuSVC.predict" title="永久链接至目标"></a></dt>
-<dd><p>预测函数，输出预测标签(0-1)</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pysvm.svm.BiNuSVC.score">
-<span class="sig-name descname"><span class="pre">score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pysvm.svm.BiNuSVC.score" title="永久链接至目标"></a></dt>
-<dd><p>评估函数，给定特征和标签，输出正确率</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="pysvm.svm.KernelSVC">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pysvm.svm.</span></span><span class="sig-name descname"><span class="pre">KernelSVC</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">C</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'rbf'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">degree</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'scale'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coef0</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rff</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">D</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1e-05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">256</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multiclass</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'ovr'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_jobs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pysvm.svm.KernelSVC" title="永久链接至目标"></a></dt>
-<dd><p>基类：<a class="reference internal" href="#pysvm.svm.LinearSVC" title="pysvm.svm.LinearSVC"><code class="xref py py-class docutils literal notranslate"><span class="pre">pysvm.svm.LinearSVC</span></code></a>, <a class="reference internal" href="#pysvm.svm.BiKernelSVC" title="pysvm.svm.BiKernelSVC"><code class="xref py py-class docutils literal notranslate"><span class="pre">pysvm.svm.BiKernelSVC</span></code></a></p>
-<p>多分类核SVM。</p>
-<dl class="field-list simple">
-<dt class="field-odd">参数</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>C</strong> (<em>float</em><em>, </em><em>default=1</em>) – SVM的正则化参数，默认为1；</p></li>
-<li><p><strong>kernel</strong> (<em>{&quot;linear&quot;</em><em>, </em><em>&quot;poly&quot;</em><em>, </em><em>&quot;rbf&quot;</em><em>, </em><em>&quot;sigmoid&quot;}</em><em>, </em><em>default=&quot;rbf&quot;</em>) – 核函数，默认径向基函数(RBF)；</p></li>
-<li><p><strong>degree</strong> (<em>float</em><em>, </em><em>default=3</em>) – 多项式核的次数，默认3；</p></li>
-<li><p><strong>gamma</strong> (<em>{&quot;scale&quot;</em><em>, </em><em>&quot;auto&quot;</em><em>, </em><em>float}</em><em>, </em><em>default=&quot;scale&quot;</em>) – rbf、ploy和sigmoid核的参数 <span class="math notranslate nohighlight">\(\gamma\)</span>，如果用’scale’，那么就是1 / (n_features * X.var())，如果用’auto’，那么就是1 / n_features；</p></li>
-<li><p><strong>coef0</strong> (<em>float</em><em>, </em><em>default=0.</em>) – 核函数中的独立项。它只在”poly”和”sigmoid”中有意义；</p></li>
-<li><p><strong>max_iter</strong> (<em>int</em><em>, </em><em>default=1000</em>) – SMO算法迭代次数，默认1000；</p></li>
-<li><p><strong>rff</strong> (<em>bool</em><em>, </em><em>default=False</em>) – 是否采用随机傅里叶特征，默认为False；</p></li>
-<li><p><strong>D</strong> (<em>int</em><em>, </em><em>default=1000</em>) – 随机傅里叶特征的采样次数，默认为1000；</p></li>
-<li><p><strong>tol</strong> (<em>float</em><em>, </em><em>default=1e-5</em>) – SMO算法的容忍度参数，默认1e-5；</p></li>
-<li><p><strong>cache_size</strong> (<em>int</em><em>, </em><em>default=256</em>) – lru缓存大小，默认256，如果为0则不使用缓存，计算Q矩阵然后求解.</p></li>
-<li><p><strong>multiclass</strong> (<em>{&quot;ovr&quot;</em><em>, </em><em>&quot;ovo&quot;}</em><em>, </em><em>default=&quot;ovr&quot;</em>) – 多分类策略，ovr(一对多)或ovo(一对一)，默认ovr；</p></li>
-<li><p><strong>n_jobs</strong> (<em>int</em><em>, </em><em>default=None</em>) – 是否采用多核，使用多少CPU并行，默认不采用。</p></li>
-</ul>
-</dd>
-</dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="pysvm.svm.KernelSVC.decision_function">
-<span class="sig-name descname"><span class="pre">decision_function</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pysvm.svm.KernelSVC.decision_function" title="永久链接至目标"></a></dt>
-<dd><p>决策函数，输出预测值</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pysvm.svm.KernelSVC.fit">
-<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pysvm.svm.KernelSVC.fit" title="永久链接至目标"></a></dt>
-<dd><p>训练模型</p>
-<dl class="field-list simple">
-<dt class="field-odd">参数</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>X</strong> (<em>np.ndarray</em>) – 训练集特征;</p></li>
-<li><p><strong>y</strong> (<em>np.array</em>) – 训练集标签，建议0为负标签，1为正标签.</p></li>
-</ul>
-</dd>
-<dt class="field-even">返回</dt>
-<dd class="field-even"><p><strong>self</strong></p>
-</dd>
-<dt class="field-odd">返回类型</dt>
-<dd class="field-odd"><p><a class="reference internal" href="#pysvm.svm.LinearSVC" title="pysvm.svm.LinearSVC">LinearSVC</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pysvm.svm.KernelSVC.predict">
-<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pysvm.svm.KernelSVC.predict" title="永久链接至目标"></a></dt>
-<dd><p>预测函数，输出预测标签(0-1)</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pysvm.svm.KernelSVC.score">
-<span class="sig-name descname"><span class="pre">score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pysvm.svm.KernelSVC.score" title="永久链接至目标"></a></dt>
-<dd><p>评估函数，给定特征和标签，输出正确率</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="pysvm.svm.KernelSVR">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pysvm.svm.</span></span><span class="sig-name descname"><span class="pre">KernelSVR</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">C</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'rbf'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">degree</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'scale'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coef0</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rff</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">D</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1e-05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">256</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pysvm.svm.KernelSVR" title="永久链接至目标"></a></dt>
-<dd><p>基类：<a class="reference internal" href="#pysvm.svm.BiKernelSVC" title="pysvm.svm.BiKernelSVC"><code class="xref py py-class docutils literal notranslate"><span class="pre">pysvm.svm.BiKernelSVC</span></code></a></p>
-<p>核支持向量回归</p>
-<blockquote>
-<div><dl class="simple">
-<dt>C<span class="classifier">float, default=1</span></dt><dd><p>SVM的正则化参数，默认为1；</p>
-</dd>
-<dt>eps<span class="classifier">float, default=0</span></dt><dd><p>:math:<a href="#id3"><span class="problematic" id="id4">`</span></a></p>
-</dd>
-</dl>
-</div></blockquote>
-<dl class="simple">
-<dt>arepsilon`-hinge损失的参数；</dt><dd><dl class="simple">
-<dt>kernel<span class="classifier">{“linear”, “poly”, “rbf”, “sigmoid”}, default=”rbf”</span></dt><dd><p>核函数，默认径向基函数(RBF)；</p>
-</dd>
-<dt>degree<span class="classifier">float, default=3</span></dt><dd><p>多项式核的次数，默认3；</p>
-</dd>
-<dt>gamma<span class="classifier">{“scale”, “auto”, float}, default=”scale”</span></dt><dd><p>rbf、ploy和sigmoid核的参数 <span class="math notranslate nohighlight">\(\gamma\)</span>，如果用’scale’，那么就是1 / (n_features * X.var())，如果用’auto’，那么就是1 / n_features；</p>
-</dd>
-<dt>coef0<span class="classifier">float, default=0.</span></dt><dd><p>核函数中的独立项。它只在”poly”和”sigmoid”中有意义；</p>
-</dd>
-<dt>max_iter<span class="classifier">int, default=1000</span></dt><dd><p>SMO算法迭代次数，默认1000；</p>
-</dd>
-<dt>rff<span class="classifier">bool, default=False</span></dt><dd><p>是否采用随机傅里叶特征，默认为False；</p>
-</dd>
-<dt>D<span class="classifier">int, default=1000</span></dt><dd><p>随机傅里叶特征的采样次数，默认为1000；</p>
-</dd>
-<dt>tol<span class="classifier">float, default=1e-5</span></dt><dd><p>SMO算法的容忍度参数，默认1e-5；</p>
-</dd>
-<dt>cache_size<span class="classifier">int, default=256</span></dt><dd><p>lru缓存大小，默认256，如果为0则不使用缓存，计算Q矩阵然后求解.</p>
-</dd>
-</dl>
-</dd>
-</dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="pysvm.svm.KernelSVR.fit">
-<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pysvm.svm.KernelSVR.fit" title="永久链接至目标"></a></dt>
-<dd><p>训练模型</p>
-<dl class="field-list simple">
-<dt class="field-odd">参数</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>X</strong> (<em>np.ndarray</em>) – 训练集特征;</p></li>
-<li><p><strong>y</strong> (<em>np.array</em>) – 训练集标签，建议0为负标签，1为正标签.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pysvm.svm.KernelSVR.predict">
-<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pysvm.svm.KernelSVR.predict" title="永久链接至目标"></a></dt>
-<dd><p>预测函数，输出预测值</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pysvm.svm.KernelSVR.score">
-<span class="sig-name descname"><span class="pre">score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pysvm.svm.KernelSVR.score" title="永久链接至目标"></a></dt>
-<dd><p>评估函数，给定特征和标签，输出r2系数</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="pysvm.svm.LinearSVC">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pysvm.svm.</span></span><span class="sig-name descname"><span class="pre">LinearSVC</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">C</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1e-05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">256</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multiclass</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'ovr'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_jobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pysvm.svm.LinearSVC" title="永久链接至目标"></a></dt>
-<dd><p>基类：<a class="reference internal" href="#pysvm.svm.BiLinearSVC" title="pysvm.svm.BiLinearSVC"><code class="xref py py-class docutils literal notranslate"><span class="pre">pysvm.svm.BiLinearSVC</span></code></a></p>
-<p>多分类线性SVM，使用sklearn的multiclass模块实现了多分类。</p>
-<dl class="field-list simple">
-<dt class="field-odd">参数</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>C</strong> (<em>float</em><em>, </em><em>default=1</em>) – SVM的正则化参数，默认为1；</p></li>
-<li><p><strong>max_iter</strong> (<em>int</em><em>, </em><em>default=1000</em>) – SMO算法迭代次数，默认1000；</p></li>
-<li><p><strong>tol</strong> (<em>float</em><em>, </em><em>default=1e-5</em>) – SMO算法的容忍度参数，默认1e-5；</p></li>
-<li><p><strong>cache_size</strong> (<em>int</em><em>, </em><em>default=256</em>) – lru缓存大小，默认256，如果为0则不使用缓存，计算Q矩阵然后求解；</p></li>
-<li><p><strong>multiclass</strong> (<em>{&quot;ovr&quot;</em><em>, </em><em>&quot;ovo&quot;}</em><em>, </em><em>default=&quot;ovr&quot;</em>) – 多分类策略，ovr(一对多)或ovo(一对一)，默认ovr；</p></li>
-<li><p><strong>n_jobs</strong> (<em>int</em><em>, </em><em>default=None</em>) – 是否采用多核，使用多少CPU并行，默认不采用。</p></li>
-</ul>
-</dd>
-</dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="pysvm.svm.LinearSVC.decision_function">
-<span class="sig-name descname"><span class="pre">decision_function</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pysvm.svm.LinearSVC.decision_function" title="永久链接至目标"></a></dt>
-<dd><p>决策函数，输出预测值</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pysvm.svm.LinearSVC.fit">
-<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pysvm.svm.LinearSVC.fit" title="永久链接至目标"></a></dt>
-<dd><p>训练模型</p>
-<dl class="field-list simple">
-<dt class="field-odd">参数</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>X</strong> (<em>np.ndarray</em>) – 训练集特征;</p></li>
-<li><p><strong>y</strong> (<em>np.array</em>) – 训练集标签，建议0为负标签，1为正标签.</p></li>
-</ul>
-</dd>
-<dt class="field-even">返回</dt>
-<dd class="field-even"><p><strong>self</strong></p>
-</dd>
-<dt class="field-odd">返回类型</dt>
-<dd class="field-odd"><p><a class="reference internal" href="#pysvm.svm.LinearSVC" title="pysvm.svm.LinearSVC">LinearSVC</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pysvm.svm.LinearSVC.predict">
-<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pysvm.svm.LinearSVC.predict" title="永久链接至目标"></a></dt>
-<dd><p>预测函数，输出预测标签(0-1)</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pysvm.svm.LinearSVC.score">
-<span class="sig-name descname"><span class="pre">score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pysvm.svm.LinearSVC.score" title="永久链接至目标"></a></dt>
-<dd><p>评估函数，给定特征和标签，输出正确率</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="pysvm.svm.LinearSVR">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pysvm.svm.</span></span><span class="sig-name descname"><span class="pre">LinearSVR</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">C</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1e-05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">256</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pysvm.svm.LinearSVR" title="永久链接至目标"></a></dt>
-<dd><p>基类：<a class="reference internal" href="#pysvm.svm.BiLinearSVC" title="pysvm.svm.BiLinearSVC"><code class="xref py py-class docutils literal notranslate"><span class="pre">pysvm.svm.BiLinearSVC</span></code></a></p>
-<p>线性SVM回归(SVR)</p>
-<p>原对偶问题</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}\min_{\pmb{\alpha},\pmb{\alpha}^*}\quad&amp;\dfrac12(\pmb{\alpha}-\pmb{\alpha}^*)^\top Q(\pmb{\alpha}-\pmb{\alpha}^*)+\varepsilon\sum_{i=1}^l(\alpha_i+\alpha_i^*)+\sum_{i=1}^l z_i({\alpha}_i-{\alpha}_i^*)\\
-\text{s.t.}\quad&amp;\pmb e^\top(\pmb{\alpha}-\pmb{\alpha}^*)=0\\
-&amp;0\leqslant\alpha_i,\alpha^*_i\leqslant C,i=1,\cdots ,l\end{split}\]</div>
-<p>我们将其变成单变量优化问题，然后使用SMO求解，参考https://welts.xyz/2021/09/16/svr/。得到决策边界</p>
-<div class="math notranslate nohighlight">
-\[f(\pmb x)=\sum_{i=1}^l(-\alpha_i+\alpha_i^*)\pmb x_i^T\pmb x-\rho\]</div>
-<dl class="field-list simple">
-<dt class="field-odd">参数</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>C</strong> (<em>float</em><em>, </em><em>default=1</em>) – SVM的正则化参数，默认为1；</p></li>
-<li><p><strong>eps</strong> (<em>float</em><em>, </em><em>default=0</em>) – <span class="math notranslate nohighlight">\(\varepsilon\)</span>-hinge损失的参数；</p></li>
-<li><p><strong>max_iter</strong> (<em>int</em><em>, </em><em>default=1000</em>) – SMO算法迭代次数，默认1000；</p></li>
-<li><p><strong>tol</strong> (<em>float</em><em>, </em><em>default=1e-5</em>) – SMO算法的容忍度参数，默认1e-5；</p></li>
-<li><p><strong>cache_size</strong> (<em>int</em><em>, </em><em>default=256</em>) – lru缓存大小，默认256，如果为0则不使用缓存，计算Q矩阵然后求解.</p></li>
-</ul>
-</dd>
-</dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="pysvm.svm.LinearSVR.decision_function">
-<span class="sig-name descname"><span class="pre">decision_function</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pysvm.svm.LinearSVR.decision_function" title="永久链接至目标"></a></dt>
-<dd><p>决策函数，输出预测值</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pysvm.svm.LinearSVR.fit">
-<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pysvm.svm.LinearSVR.fit" title="永久链接至目标"></a></dt>
-<dd><p>训练模型</p>
-<dl class="field-list simple">
-<dt class="field-odd">参数</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>X</strong> (<em>np.ndarray</em>) – 训练集特征;</p></li>
-<li><p><strong>y</strong> (<em>np.array</em>) – 训练集target</p></li>
-</ul>
-</dd>
-<dt class="field-even">返回</dt>
-<dd class="field-even"><p><strong>self</strong></p>
-</dd>
-<dt class="field-odd">返回类型</dt>
-<dd class="field-odd"><p><a class="reference internal" href="#pysvm.svm.LinearSVR" title="pysvm.svm.LinearSVR">LinearSVR</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pysvm.svm.LinearSVR.predict">
-<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pysvm.svm.LinearSVR.predict" title="永久链接至目标"></a></dt>
-<dd><p>预测函数，输出预测值</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pysvm.svm.LinearSVR.score">
-<span class="sig-name descname"><span class="pre">score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pysvm.svm.LinearSVR.score" title="永久链接至目标"></a></dt>
-<dd><p>评估函数，给定特征和标签，输出r2系数</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="pysvm.svm.NuSVC">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pysvm.svm.</span></span><span class="sig-name descname"><span class="pre">NuSVC</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nu</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'rbf'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">degree</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'scale'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coef0</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rff</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">D</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1e-05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">256</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multiclass</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'ovr'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_jobs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pysvm.svm.NuSVC" title="永久链接至目标"></a></dt>
-<dd><p>基类：<a class="reference internal" href="#pysvm.svm.KernelSVC" title="pysvm.svm.KernelSVC"><code class="xref py py-class docutils literal notranslate"><span class="pre">pysvm.svm.KernelSVC</span></code></a>, <a class="reference internal" href="#pysvm.svm.BiNuSVC" title="pysvm.svm.BiNuSVC"><code class="xref py py-class docutils literal notranslate"><span class="pre">pysvm.svm.BiNuSVC</span></code></a></p>
-<p>多分类NuSVM</p>
-<dl class="field-list simple">
-<dt class="field-odd">参数</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>nu</strong> (<em>float</em><em>, </em><em>default=0.5</em>) – NuSVM的参数，控制支持向量的数量；</p></li>
-<li><p><strong>kernel</strong> (<em>{&quot;linear&quot;</em><em>, </em><em>&quot;poly&quot;</em><em>, </em><em>&quot;rbf&quot;</em><em>, </em><em>&quot;sigmoid&quot;}</em><em>, </em><em>default=&quot;rbf&quot;</em>) – 核函数，默认径向基函数(RBF)；</p></li>
-<li><p><strong>degree</strong> (<em>float</em><em>, </em><em>default=3</em>) – 多项式核的次数，默认3；</p></li>
-<li><p><strong>gamma</strong> (<em>{&quot;scale&quot;</em><em>, </em><em>&quot;auto&quot;</em><em>, </em><em>float}</em><em>, </em><em>default=&quot;scale&quot;</em>) – rbf、ploy和sigmoid核的参数 <span class="math notranslate nohighlight">\(\gamma\)</span>，如果用’scale’，那么就是1 / (n_features * X.var())，如果用’auto’，那么就是1 / n_features；</p></li>
-<li><p><strong>coef0</strong> (<em>float</em><em>, </em><em>default=0.</em>) – 核函数中的独立项。它只在”poly”和”sigmoid”中有意义；</p></li>
-<li><p><strong>max_iter</strong> (<em>int</em><em>, </em><em>default=1000</em>) – SMO算法迭代次数，默认1000；</p></li>
-<li><p><strong>rff</strong> (<em>bool</em><em>, </em><em>default=False</em>) – 是否采用随机傅里叶特征，默认为False；</p></li>
-<li><p><strong>D</strong> (<em>int</em><em>, </em><em>default=1000</em>) – 随机傅里叶特征的采样次数，默认为1000；</p></li>
-<li><p><strong>tol</strong> (<em>float</em><em>, </em><em>default=1e-5</em>) – SMO算法的容忍度参数，默认1e-5；</p></li>
-<li><p><strong>cache_size</strong> (<em>int</em><em>, </em><em>default=256</em>) – lru缓存大小，默认256，如果为0则不使用缓存，计算Q矩阵然后求解.</p></li>
-<li><p><strong>multiclass</strong> (<em>{&quot;ovr&quot;</em><em>, </em><em>&quot;ovo&quot;}</em><em>, </em><em>default=&quot;ovr&quot;</em>) – 多分类策略，ovr(一对多)或ovo(一对一)，默认ovr；</p></li>
-<li><p><strong>n_jobs</strong> (<em>int</em><em>, </em><em>default=None</em>) – 是否采用多核，使用多少CPU并行，默认不采用。</p></li>
-</ul>
-</dd>
-</dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="pysvm.svm.NuSVC.fit">
-<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pysvm.svm.NuSVC.fit" title="永久链接至目标"></a></dt>
-<dd><p>训练模型</p>
-<dl class="field-list simple">
-<dt class="field-odd">参数</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>X</strong> (<em>np.ndarray</em>) – 训练集特征;</p></li>
-<li><p><strong>y</strong> (<em>np.array</em>) – 训练集标签，建议0为负标签，1为正标签.</p></li>
-</ul>
-</dd>
-<dt class="field-even">返回</dt>
-<dd class="field-even"><p><strong>self</strong></p>
-</dd>
-<dt class="field-odd">返回类型</dt>
-<dd class="field-odd"><p><a class="reference internal" href="#pysvm.svm.LinearSVC" title="pysvm.svm.LinearSVC">LinearSVC</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pysvm.svm.NuSVC.predict">
-<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pysvm.svm.NuSVC.predict" title="永久链接至目标"></a></dt>
-<dd><p>预测函数，输出预测标签(0-1)</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pysvm.svm.NuSVC.score">
-<span class="sig-name descname"><span class="pre">score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pysvm.svm.NuSVC.score" title="永久链接至目标"></a></dt>
-<dd><p>评估函数，给定特征和标签，输出正确率</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="pysvm.svm.NuSVR">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pysvm.svm.</span></span><span class="sig-name descname"><span class="pre">NuSVR</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">C</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nu</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'rbf'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">degree</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'scale'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coef0</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rff</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">D</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1e-05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">256</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pysvm.svm.NuSVR" title="永久链接至目标"></a></dt>
-<dd><p>基类：<a class="reference internal" href="#pysvm.svm.KernelSVR" title="pysvm.svm.KernelSVR"><code class="xref py py-class docutils literal notranslate"><span class="pre">pysvm.svm.KernelSVR</span></code></a></p>
-<p>NuSVM回归</p>
-<p>对偶问题求解</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}\min_{\pmb{\alpha},\pmb{\alpha}^*}\quad&amp;\dfrac12(\pmb{\alpha}-\pmb{\alpha}^*)^\top Q(\pmb{\alpha}-\pmb{\alpha}^*)+\pmb z^\top({\pmb\alpha}-{\pmb\alpha}^*)\\
-\text{s.t.}\quad&amp;\pmb e^\top(\pmb{\alpha}-\pmb{\alpha}^*)=0,\pmb e^\top(\pmb\alpha+\pmb\alpha_i^*)\leqslant C\nu\\
-&amp;0\leqslant\alpha_i,\alpha^*_i\leqslant C/l,i=1,\cdots ,l\end{split}\]</div>
-<p>处理方式和LinearSVR中的类似.</p>
-<dl class="field-list simple">
-<dt class="field-odd">参数</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>C</strong> (<em>float</em><em>, </em><em>default=1</em>) – SVM的正则化参数，默认为1；</p></li>
-<li><p><strong>nu</strong> (<em>float</em><em>, </em><em>default=0.5</em>) – NuSVM的参数，控制支持向量的数量；</p></li>
-<li><p><strong>kernel</strong> (<em>{&quot;linear&quot;</em><em>, </em><em>&quot;poly&quot;</em><em>, </em><em>&quot;rbf&quot;</em><em>, </em><em>&quot;sigmoid&quot;}</em><em>, </em><em>default=&quot;rbf&quot;</em>) – 核函数，默认径向基函数(RBF)；</p></li>
-<li><p><strong>degree</strong> (<em>float</em><em>, </em><em>default=3</em>) – 多项式核的次数，默认3；</p></li>
-<li><p><strong>gamma</strong> (<em>{&quot;scale&quot;</em><em>, </em><em>&quot;auto&quot;</em><em>, </em><em>float}</em><em>, </em><em>default=&quot;scale&quot;</em>) – rbf、ploy和sigmoid核的参数 <span class="math notranslate nohighlight">\(\gamma\)</span>，如果用’scale’，那么就是1 / (n_features * X.var())，如果用’auto’，那么就是1 / n_features；</p></li>
-<li><p><strong>coef0</strong> (<em>float</em><em>, </em><em>default=0.</em>) – 核函数中的独立项。它只在”poly”和”sigmoid”中有意义；</p></li>
-<li><p><strong>max_iter</strong> (<em>int</em><em>, </em><em>default=1000</em>) – SMO算法迭代次数，默认1000；</p></li>
-<li><p><strong>rff</strong> (<em>bool</em><em>, </em><em>default=False</em>) – 是否采用随机傅里叶特征，默认为False；</p></li>
-<li><p><strong>D</strong> (<em>int</em><em>, </em><em>default=1000</em>) – 随机傅里叶特征的采样次数，默认为1000；</p></li>
-<li><p><strong>tol</strong> (<em>float</em><em>, </em><em>default=1e-5</em>) – SMO算法的容忍度参数，默认1e-5；</p></li>
-<li><p><strong>cache_size</strong> (<em>int</em><em>, </em><em>default=256</em>) – lru缓存大小，默认256，如果为0则不使用缓存，计算Q矩阵然后求解.</p></li>
-</ul>
-</dd>
-</dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="pysvm.svm.NuSVR.fit">
-<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pysvm.svm.NuSVR.fit" title="永久链接至目标"></a></dt>
-<dd><p>训练模型</p>
-<dl class="field-list simple">
-<dt class="field-odd">参数</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>X</strong> (<em>np.ndarray</em>) – 训练集特征;</p></li>
-<li><p><strong>y</strong> (<em>np.array</em>) – 训练集标签，建议0为负标签，1为正标签.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pysvm.svm.NuSVR.predict">
-<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pysvm.svm.NuSVR.predict" title="永久链接至目标"></a></dt>
-<dd><p>预测函数，输出预测值</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pysvm.svm.NuSVR.score">
-<span class="sig-name descname"><span class="pre">score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pysvm.svm.NuSVR.score" title="永久链接至目标"></a></dt>
-<dd><p>评估函数，给定特征和标签，输出r2系数</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="pysvm.svm.OneClassSVM">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pysvm.svm.</span></span><span class="sig-name descname"><span class="pre">OneClassSVM</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nu</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'rbf'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">degree</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'scale'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coef0</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rff</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">D</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1e-05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">256</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pysvm.svm.OneClassSVM" title="永久链接至目标"></a></dt>
-<dd><p>基类：<a class="reference internal" href="#pysvm.svm.BiNuSVC" title="pysvm.svm.BiNuSVC"><code class="xref py py-class docutils literal notranslate"><span class="pre">pysvm.svm.BiNuSVC</span></code></a></p>
-<p>OneClassSVM(OC_SVM)，单类SVM，用于异常检测</p>
-<p>求解对偶问题</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}\min_{\pmb\alpha}\quad&amp;\dfrac{1}{2}\pmb\alpha^\top Q\pmb\alpha\\
-\text{s.t.}\quad&amp;0\le\alpha_i\le1/(\nu l),i=1,\cdots l\\
-&amp;\pmb e^\top\alpha=1\end{split}\]</div>
-<p>得到判别式</p>
-<div class="math notranslate nohighlight">
-\[f(\pmb x)=\text{sgn}(\sum_{i=1}^ly_i\alpha_i\pmb K(\pmb x_i,\pmb x)-\rho)\]</div>
-<dl class="field-list simple">
-<dt class="field-odd">参数</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>nu</strong> (<em>float</em><em>, </em><em>default=0.5</em>) – 控制支持向量的数量的参数；</p></li>
-<li><p><strong>kernel</strong> (<em>{&quot;linear&quot;</em><em>, </em><em>&quot;poly&quot;</em><em>, </em><em>&quot;rbf&quot;</em><em>, </em><em>&quot;sigmoid&quot;}</em><em>, </em><em>default=&quot;rbf&quot;</em>) – 核函数，默认径向基函数(RBF)；</p></li>
-<li><p><strong>degree</strong> (<em>float</em><em>, </em><em>default=3</em>) – 多项式核的次数，默认3；</p></li>
-<li><p><strong>gamma</strong> (<em>{&quot;scale&quot;</em><em>, </em><em>&quot;auto&quot;</em><em>, </em><em>float}</em><em>, </em><em>default=&quot;scale&quot;</em>) – rbf、ploy和sigmoid核的参数 <span class="math notranslate nohighlight">\(\gamma\)</span>，如果用’scale’，那么就是1 / (n_features * X.var())，如果用’auto’，那么就是1 / n_features；</p></li>
-<li><p><strong>coef0</strong> (<em>float</em><em>, </em><em>default=0.</em>) – 核函数中的独立项。它只在”poly”和”sigmoid”中有意义；</p></li>
-<li><p><strong>max_iter</strong> (<em>int</em><em>, </em><em>default=1000</em>) – SMO算法迭代次数，默认1000；</p></li>
-<li><p><strong>rff</strong> (<em>bool</em><em>, </em><em>default=False</em>) – 是否采用随机傅里叶特征，默认为False；</p></li>
-<li><p><strong>D</strong> (<em>int</em><em>, </em><em>default=1000</em>) – 随机傅里叶特征的采样次数，默认为1000；</p></li>
-<li><p><strong>tol</strong> (<em>float</em><em>, </em><em>default=1e-5</em>) – SMO算法的容忍度参数，默认1e-5；</p></li>
-<li><p><strong>cache_size</strong> (<em>int</em><em>, </em><em>default=256</em>) – lru缓存大小，默认256，如果为0则不使用缓存，计算Q矩阵然后求解.</p></li>
-</ul>
-</dd>
-</dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="pysvm.svm.OneClassSVM.fit">
-<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pysvm.svm.OneClassSVM.fit" title="永久链接至目标"></a></dt>
-<dd><p>训练函数，注意到OC_SVM是无监督学习，所以输入无标签</p>
-<dl class="field-list simple">
-<dt class="field-odd">参数</dt>
-<dd class="field-odd"><p><strong>X</strong> (<em>np.ndarray</em>) – 训练特征数据</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pysvm.svm.OneClassSVM.predict">
-<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pysvm.svm.OneClassSVM.predict" title="永久链接至目标"></a></dt>
-<dd><p>判别数据是否异常，正常为1，异常为-1</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pysvm.svm.OneClassSVM.score">
-<span class="sig-name descname"><span class="pre">score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pysvm.svm.OneClassSVM.score" title="永久链接至目标"></a></dt>
-<dd><p>无监督问题不存在评估函数，因此调用该函数会引发异常</p>
-</dd></dl>
-
-</dd></dl>
-
 </section>
 <section id="module-pysvm">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-pysvm" title="永久链接至标题"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="pysvm.KernelSVC">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pysvm.</span></span><span class="sig-name descname"><span class="pre">KernelSVC</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">C</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'rbf'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">degree</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'scale'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coef0</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rff</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">D</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1e-05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">256</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multiclass</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'ovr'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_jobs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pysvm.KernelSVC" title="永久链接至目标"></a></dt>
-<dd><p>基类：<a class="reference internal" href="#pysvm.svm.LinearSVC" title="pysvm.svm.LinearSVC"><code class="xref py py-class docutils literal notranslate"><span class="pre">pysvm.svm.LinearSVC</span></code></a>, <a class="reference internal" href="#pysvm.svm.BiKernelSVC" title="pysvm.svm.BiKernelSVC"><code class="xref py py-class docutils literal notranslate"><span class="pre">pysvm.svm.BiKernelSVC</span></code></a></p>
+<dd><p>基类：<a class="reference internal" href="#pysvm.LinearSVC" title="pysvm.svm.svc.LinearSVC"><code class="xref py py-class docutils literal notranslate"><span class="pre">pysvm.svm.svc.LinearSVC</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">pysvm.svm.svc.BiKernelSVC</span></code></p>
 <p>多分类核SVM。</p>
 <dl class="field-list simple">
 <dt class="field-odd">参数</dt>
@@ -1014,37 +422,23 @@ j&amp;\in\arg\max_{t}\{-y_t\nabla_tf(\pmb\alpha)|t\in\pmb{I}_{low}(\pmb\alpha)\}
 <dl class="py class">
 <dt class="sig sig-object py" id="pysvm.KernelSVR">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pysvm.</span></span><span class="sig-name descname"><span class="pre">KernelSVR</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">C</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'rbf'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">degree</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'scale'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coef0</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rff</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">D</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1e-05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">256</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pysvm.KernelSVR" title="永久链接至目标"></a></dt>
-<dd><p>基类：<a class="reference internal" href="#pysvm.svm.BiKernelSVC" title="pysvm.svm.BiKernelSVC"><code class="xref py py-class docutils literal notranslate"><span class="pre">pysvm.svm.BiKernelSVC</span></code></a></p>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">pysvm.svm.svc.BiKernelSVC</span></code></p>
 <p>核支持向量回归</p>
-<blockquote>
-<div><dl class="simple">
-<dt>C<span class="classifier">float, default=1</span></dt><dd><p>SVM的正则化参数，默认为1；</p>
-</dd>
-<dt>eps<span class="classifier">float, default=0</span></dt><dd><p>:math:<a href="#id5"><span class="problematic" id="id6">`</span></a></p>
-</dd>
-</dl>
-</div></blockquote>
-<dl class="simple">
-<dt>arepsilon`-hinge损失的参数；</dt><dd><dl class="simple">
-<dt>kernel<span class="classifier">{“linear”, “poly”, “rbf”, “sigmoid”}, default=”rbf”</span></dt><dd><p>核函数，默认径向基函数(RBF)；</p>
-</dd>
-<dt>degree<span class="classifier">float, default=3</span></dt><dd><p>多项式核的次数，默认3；</p>
-</dd>
-<dt>gamma<span class="classifier">{“scale”, “auto”, float}, default=”scale”</span></dt><dd><p>rbf、ploy和sigmoid核的参数 <span class="math notranslate nohighlight">\(\gamma\)</span>，如果用’scale’，那么就是1 / (n_features * X.var())，如果用’auto’，那么就是1 / n_features；</p>
-</dd>
-<dt>coef0<span class="classifier">float, default=0.</span></dt><dd><p>核函数中的独立项。它只在”poly”和”sigmoid”中有意义；</p>
-</dd>
-<dt>max_iter<span class="classifier">int, default=1000</span></dt><dd><p>SMO算法迭代次数，默认1000；</p>
-</dd>
-<dt>rff<span class="classifier">bool, default=False</span></dt><dd><p>是否采用随机傅里叶特征，默认为False；</p>
-</dd>
-<dt>D<span class="classifier">int, default=1000</span></dt><dd><p>随机傅里叶特征的采样次数，默认为1000；</p>
-</dd>
-<dt>tol<span class="classifier">float, default=1e-5</span></dt><dd><p>SMO算法的容忍度参数，默认1e-5；</p>
-</dd>
-<dt>cache_size<span class="classifier">int, default=256</span></dt><dd><p>lru缓存大小，默认256，如果为0则不使用缓存，计算Q矩阵然后求解.</p>
-</dd>
-</dl>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>C</strong> (<em>float</em><em>, </em><em>default=1</em>) – SVM的正则化参数，默认为1；</p></li>
+<li><p><strong>eps</strong> (<em>float</em><em>, </em><em>default=0</em>) – <span class="math notranslate nohighlight">\(\varepsilon\)</span>-hinge损失的参数；</p></li>
+<li><p><strong>kernel</strong> (<em>{&quot;linear&quot;</em><em>, </em><em>&quot;poly&quot;</em><em>, </em><em>&quot;rbf&quot;</em><em>, </em><em>&quot;sigmoid&quot;}</em><em>, </em><em>default=&quot;rbf&quot;</em>) – 核函数，默认径向基函数(RBF)；</p></li>
+<li><p><strong>degree</strong> (<em>float</em><em>, </em><em>default=3</em>) – 多项式核的次数，默认3；</p></li>
+<li><p><strong>gamma</strong> (<em>{&quot;scale&quot;</em><em>, </em><em>&quot;auto&quot;</em><em>, </em><em>float}</em><em>, </em><em>default=&quot;scale&quot;</em>) – rbf、ploy和sigmoid核的参数 <span class="math notranslate nohighlight">\(\gamma\)</span>，如果用’scale’，那么就是1 / (n_features * X.var())，如果用’auto’，那么就是1 / n_features；</p></li>
+<li><p><strong>coef0</strong> (<em>float</em><em>, </em><em>default=0.</em>) – 核函数中的独立项。它只在”poly”和”sigmoid”中有意义；</p></li>
+<li><p><strong>max_iter</strong> (<em>int</em><em>, </em><em>default=1000</em>) – SMO算法迭代次数，默认1000；</p></li>
+<li><p><strong>rff</strong> (<em>bool</em><em>, </em><em>default=False</em>) – 是否采用随机傅里叶特征，默认为False；</p></li>
+<li><p><strong>D</strong> (<em>int</em><em>, </em><em>default=1000</em>) – 随机傅里叶特征的采样次数，默认为1000；</p></li>
+<li><p><strong>tol</strong> (<em>float</em><em>, </em><em>default=1e-5</em>) – SMO算法的容忍度参数，默认1e-5；</p></li>
+<li><p><strong>cache_size</strong> (<em>int</em><em>, </em><em>default=256</em>) – lru缓存大小，默认256，如果为0则不使用缓存，计算Q矩阵然后求解.</p></li>
+</ul>
 </dd>
 </dl>
 <dl class="py method">
@@ -1078,7 +472,7 @@ j&amp;\in\arg\max_{t}\{-y_t\nabla_tf(\pmb\alpha)|t\in\pmb{I}_{low}(\pmb\alpha)\}
 <dl class="py class">
 <dt class="sig sig-object py" id="pysvm.LinearSVC">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pysvm.</span></span><span class="sig-name descname"><span class="pre">LinearSVC</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">C</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1e-05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">256</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multiclass</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'ovr'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_jobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pysvm.LinearSVC" title="永久链接至目标"></a></dt>
-<dd><p>基类：<a class="reference internal" href="#pysvm.svm.BiLinearSVC" title="pysvm.svm.BiLinearSVC"><code class="xref py py-class docutils literal notranslate"><span class="pre">pysvm.svm.BiLinearSVC</span></code></a></p>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">pysvm.svm.svc.BiLinearSVC</span></code></p>
 <p>多分类线性SVM，使用sklearn的multiclass模块实现了多分类。</p>
 <dl class="field-list simple">
 <dt class="field-odd">参数</dt>
@@ -1135,7 +529,7 @@ j&amp;\in\arg\max_{t}\{-y_t\nabla_tf(\pmb\alpha)|t\in\pmb{I}_{low}(\pmb\alpha)\}
 <dl class="py class">
 <dt class="sig sig-object py" id="pysvm.LinearSVR">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pysvm.</span></span><span class="sig-name descname"><span class="pre">LinearSVR</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">C</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1e-05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">256</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pysvm.LinearSVR" title="永久链接至目标"></a></dt>
-<dd><p>基类：<a class="reference internal" href="#pysvm.svm.BiLinearSVC" title="pysvm.svm.BiLinearSVC"><code class="xref py py-class docutils literal notranslate"><span class="pre">pysvm.svm.BiLinearSVC</span></code></a></p>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">pysvm.svm.svc.BiLinearSVC</span></code></p>
 <p>线性SVM回归(SVR)</p>
 <p>原对偶问题</p>
 <div class="math notranslate nohighlight">
@@ -1199,7 +593,7 @@ j&amp;\in\arg\max_{t}\{-y_t\nabla_tf(\pmb\alpha)|t\in\pmb{I}_{low}(\pmb\alpha)\}
 <dl class="py class">
 <dt class="sig sig-object py" id="pysvm.NuSVC">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pysvm.</span></span><span class="sig-name descname"><span class="pre">NuSVC</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nu</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'rbf'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">degree</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'scale'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coef0</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rff</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">D</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1e-05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">256</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multiclass</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'ovr'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_jobs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pysvm.NuSVC" title="永久链接至目标"></a></dt>
-<dd><p>基类：<a class="reference internal" href="#pysvm.svm.KernelSVC" title="pysvm.svm.KernelSVC"><code class="xref py py-class docutils literal notranslate"><span class="pre">pysvm.svm.KernelSVC</span></code></a>, <a class="reference internal" href="#pysvm.svm.BiNuSVC" title="pysvm.svm.BiNuSVC"><code class="xref py py-class docutils literal notranslate"><span class="pre">pysvm.svm.BiNuSVC</span></code></a></p>
+<dd><p>基类：<a class="reference internal" href="#pysvm.KernelSVC" title="pysvm.svm.svc.KernelSVC"><code class="xref py py-class docutils literal notranslate"><span class="pre">pysvm.svm.svc.KernelSVC</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">pysvm.svm.svc.BiNuSVC</span></code></p>
 <p>多分类NuSVM</p>
 <dl class="field-list simple">
 <dt class="field-odd">参数</dt>
@@ -1256,7 +650,7 @@ j&amp;\in\arg\max_{t}\{-y_t\nabla_tf(\pmb\alpha)|t\in\pmb{I}_{low}(\pmb\alpha)\}
 <dl class="py class">
 <dt class="sig sig-object py" id="pysvm.NuSVR">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pysvm.</span></span><span class="sig-name descname"><span class="pre">NuSVR</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">C</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nu</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'rbf'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">degree</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'scale'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coef0</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rff</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">D</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1e-05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">256</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pysvm.NuSVR" title="永久链接至目标"></a></dt>
-<dd><p>基类：<a class="reference internal" href="#pysvm.svm.KernelSVR" title="pysvm.svm.KernelSVR"><code class="xref py py-class docutils literal notranslate"><span class="pre">pysvm.svm.KernelSVR</span></code></a></p>
+<dd><p>基类：<a class="reference internal" href="#pysvm.KernelSVR" title="pysvm.svm.svr.KernelSVR"><code class="xref py py-class docutils literal notranslate"><span class="pre">pysvm.svm.svr.KernelSVR</span></code></a></p>
 <p>NuSVM回归</p>
 <p>对偶问题求解</p>
 <div class="math notranslate nohighlight">
@@ -1312,7 +706,7 @@ j&amp;\in\arg\max_{t}\{-y_t\nabla_tf(\pmb\alpha)|t\in\pmb{I}_{low}(\pmb\alpha)\}
 <dl class="py class">
 <dt class="sig sig-object py" id="pysvm.OneClassSVM">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pysvm.</span></span><span class="sig-name descname"><span class="pre">OneClassSVM</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nu</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'rbf'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">degree</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'scale'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coef0</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rff</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">D</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1e-05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">256</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pysvm.OneClassSVM" title="永久链接至目标"></a></dt>
-<dd><p>基类：<a class="reference internal" href="#pysvm.svm.BiNuSVC" title="pysvm.svm.BiNuSVC"><code class="xref py py-class docutils literal notranslate"><span class="pre">pysvm.svm.BiNuSVC</span></code></a></p>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">pysvm.svm.svc.BiNuSVC</span></code></p>
 <p>OneClassSVM(OC_SVM)，单类SVM，用于异常检测</p>
 <p>求解对偶问题</p>
 <div class="math notranslate nohighlight">
