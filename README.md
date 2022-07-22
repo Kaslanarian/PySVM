@@ -72,7 +72,11 @@ graph BT
 
 ## Install
 
-输入
+```bash
+pip install pysvm
+```
+
+或源码安装
 
 ```bash
 git clone https://github.com/Kaslanarian/PySVM
@@ -80,7 +84,7 @@ cd PySVM
 python setup.py install
 ```
 
-进行安装，运行一个简单例子
+运行一个简单例子
 
 ```python
 >>> from sklearn.datasets import load_iris
@@ -123,10 +127,6 @@ python setup.py install
 - [visual_outlier.py](./tests/visual_outlier.py)用OneClassSVM进行异常检测：
 
   ![oc_svm](src/oc_svm.png)
-
-## Current work
-
-- 文档的撰写。
 
 ## Reference
 
