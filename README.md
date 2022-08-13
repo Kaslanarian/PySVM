@@ -1,6 +1,11 @@
 # PySVM : A NumPy implementation of SVM based on SMO algorithm
 
-[![Downloads](https://pepy.tech/badge/pysvm)](https://pepy.tech/project/pysvm) ![](https://img.shields.io/pypi/dm/pysvm) ![](https://img.shields.io/pypi/l/pysvm) ![](https://img.shields.io/pypi/implementation/numpy) ![](https://img.shields.io/github/stars/Kaslanarian/PySVM?style=social) ![](https://img.shields.io/github/forks/Kaslanarian/PySVM?style=social)
+[![Downloads](https://pepy.tech/badge/pysvm)](https://pepy.tech/project/pysvm) 
+[![Downloads](https://static.pepy.tech/personalized-badge/pysvm?period=month&units=international_system&left_color=lightgrey&right_color=green&left_text=Downloads/month)](https://pepy.tech/project/pysvm)
+![](https://img.shields.io/pypi/l/pysvm) 
+![](https://img.shields.io/pypi/implementation/numpy) 
+![](https://img.shields.io/github/stars/Kaslanarian/PySVM?style=social) 
+![](https://img.shields.io/github/forks/Kaslanarian/PySVM?style=social)
 
 实现LIBSVM中的SVM算法，对标sklearn中的SVM模块
 
