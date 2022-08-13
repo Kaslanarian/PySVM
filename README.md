@@ -26,23 +26,31 @@
 
 ## 主要算法
 
-Python(NumPy)实现SMO算法，也就是
+Python(NumPy)实现SMO算法，用于求解对偶问题
 
-$$\min_{\pmb\alpha}\quad\frac12\pmb\alpha^T\pmb Q\pmb\alpha+\pmb p^T\pmb\alpha\\
+$$
+\begin{aligned}
+\min_{\pmb\alpha}\quad\frac12\pmb\alpha^T\pmb Q\pmb\alpha+\pmb p^T\pmb\alpha\\
 \text{s.t.}\quad \begin{aligned}\pmb y^T\pmb\alpha&=0\\
 0\leq\alpha_i&\leq C,\forall i
-\end{aligned}$$
+\end{aligned}
+\end{aligned}
+$$
 
 和
 
-$$\min_{\pmb\alpha}\quad\frac12\pmb\alpha^T\pmb Q\pmb\alpha+\pmb p^T\pmb\alpha\\
+$$
+\begin{aligned}
+\min_{\pmb\alpha}\quad\frac12\pmb\alpha^T\pmb Q\pmb\alpha+\pmb p^T\pmb\alpha\\
 \text{s.t.}
 \begin{aligned}\quad \pmb y^T\pmb\alpha&=\delta_1\\
 \pmb e^T\pmb\alpha&=\sum_{i}\alpha_i=\delta_2\\
 0\leq&\alpha_i\leq C,\forall i
-\end{aligned}$$
+\end{aligned}
+\end{aligned}
+$$
 
-的优化算法，从而实现支持向量机分类、回归以及异常检测。
+从而实现支持向量机分类、回归以及异常检测。
 
 ## Framework
 
