@@ -28,11 +28,19 @@
 
 Python(NumPy)实现SMO算法，也就是
 
-<img src="src/formula.png" alt="opt" style="zoom:67%;" />
+$$\min_{\pmb\alpha}\quad\frac12\pmb\alpha^T\pmb Q\pmb\alpha+\pmb p^T\pmb\alpha\\
+\text{s.t.}\quad \begin{aligned}\pmb y^T\pmb\alpha&=0\\
+0\leq\alpha_i&\leq C,\forall i
+\end{aligned}$$
 
 和
 
-<img src="src/nu-formula.png" alt="opt" style="zoom:67%;" />
+$$\min_{\pmb\alpha}\quad\frac12\pmb\alpha^T\pmb Q\pmb\alpha+\pmb p^T\pmb\alpha\\
+\text{s.t.}
+\begin{aligned}\quad \pmb y^T\pmb\alpha&=\delta_1\\
+\pmb e^T\pmb\alpha&=\sum_{i}\alpha_i=\delta_2\\
+0\leq&\alpha_i\leq C,\forall i
+\end{aligned}$$
 
 的优化算法，从而实现支持向量机分类、回归以及异常检测。
 
@@ -41,7 +49,7 @@ Python(NumPy)实现SMO算法，也就是
 我们实现了线性SVM，核SVM，用于分类，回归和异常检测:
 
 ```mermaid
-graph 
+graph LR
 	PySVM --> LinearSVM
 	PySVM --> KernelSVM
 	PySVM --> NuSVM
@@ -57,7 +65,7 @@ graph
 设计框架：
 
 ```mermaid
-graph BT
+graph LR
 	cache(LRU Cache) --> Solver
 	Solver --> LinearSVM
 	LinearSVM --> KernelSVM
