@@ -151,6 +151,19 @@ python setup.py install
 
   ![oc_svm](src/oc_svm.png)
 
+## Citation
+
+If you used this package in your research and are interested in citing it here's how you do it:
+
+```
+@Misc{,
+    author = {Xing Cunyuan},
+    title = {{PySVM}: A NumPy implementation of SVM based on SMO algorithm},
+    year = {2022--},
+    url = " https://github.com/Kaslanarian/PySVM"
+}
+```
+
 ## Reference
 
 - Chang, Chih-Chung, and Chih-Jen Lin. "LIBSVM: a library for support vector machines." ACM transactions on intelligent systems and technology (TIST) 2.3 (2011): 1-27.
