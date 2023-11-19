@@ -156,10 +156,10 @@ python setup.py install
 If you used this package in your research and are interested in citing it here's how you do it:
 
 ```
-@Misc{,
-    author = {Xing Cunyuan},
+@Misc{xing2022pysvm,
+    author = {Xing, Cunyuan},
     title = {{PySVM}: A NumPy implementation of SVM based on SMO algorithm},
-    year = {2022--},
+    year = {2022},
     url = " https://github.com/Kaslanarian/PySVM"
 }
 ```
